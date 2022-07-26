@@ -1,4 +1,3 @@
-//class
 class Cart {
   constructor() {
     this.product = {};
@@ -33,10 +32,30 @@ $("#empty-cart").hide();
 let data = {};
 
 //product fetch
+
+
+/*fetch().then((response) => {
+  if (response.ok) {
+    return response.json();
+  }
+  throw new Error('Something went wrong');
+})
+.then((responseJson) => {
+  // Do something with the response
+})
+.catch((error) => {
+  console.log(error)
+});*/
+
+
 window.onload = function () {
-  fetch("https://deepblue.camosun.bc.ca/~c0180354/ics128/final/fakestoreapi.json").
-    then(response => response.json()).
-    then((json) => {
+  fetch("https://fakestoreapi.com/products").
+    then((response) =>{ 
+      if(response.status===200){
+        return response.json();
+      }
+      throw new Error("Something went wrong");
+    }).then((json) => {
       data = json;
 
       data.forEach(productShow);
@@ -44,7 +63,25 @@ window.onload = function () {
       jQuery(catalog_container).imagesLoaded(function () {
         let msnry = new Masonry(catalog_container); // this initializes the masonry container AFTER the product images are loaded
       });
-    }).then(addCart);
+    })
+    .catch((error) => {
+      fetch("https://deepblue.camosun.bc.ca/~c0180354/ics128/final/fakestoreapi.json").
+    then((response) =>{ 
+      if(response.status===200){
+        return response.json();
+      }
+      throw new Error("Something went wrong");
+    }).then((json) => {
+      data = json;
+
+      data.forEach(productShow);
+      let catalog_container = document.getElementById("products"); // assuming your target is <div class='row' id='catalog'>
+      jQuery(catalog_container).imagesLoaded(function () {
+        let msnry = new Masonry(catalog_container); // this initializes the masonry container AFTER the product images are loaded
+      });
+    })
+    }).then(addCart).
+    then(cookies);
 }
 
 //display the items
@@ -176,14 +213,59 @@ let click = 0;
 
 function addCart() {
 
-  let v_cart = document.getElementById("view-cart")
+  let v_cart = document.getElementById("view-cart");
   $(".add-to-cart").click(function () {
     $(`#item`).show();
     $("#empty-cart").show();
     v_cart.value = `View Cart (${totalQty()})`;
-    changeCurrency();
     $("#order-cart").modal('show');
-  });
+    //$("#order-cart").fadeOut(300);
+    setTimeout(modalHide,800);
+    function modalHide(){
+      $("#order-cart").modal('hide');
+    }
+    changeCurrency();
+    let option1 = document.getElementById("select");
+    let value1 = select.options[option1.selectedIndex].value;
+
+    if (value1 == "usd") {
+      for (let item in cart.product) {
+
+        let total = 0;
+    
+        total = ((total + cart.product[item].quantity * cart.product[item].price)*currency.cad.usd).toFixed(2);
+    
+    
+        subtotal = parseFloat(total) + parseFloat(subtotal);
+        txt += `<div id = "div${cart.product[item].id}"><tr>
+          <td>${cart.product[item].title}</td>
+          <td>CA$${((cart.product[item].price)).toFixed(2)}</td>
+          <td>${cart.product[item].quantity}</td>
+          <td>CA$${total} </td>
+          <td><button class = "remove" id = "remove-button-${cart.product[item].id}"> <span class="material-symbols-outlined">
+          delete
+          </span> </button>
+          </tr></div>`;
+  }
+  }
+  if (value1 == "bdt") {
+    for (let item in cart.product) {
+
+      let total = 0;
+  
+      total = ((total + cart.product[item].quantity * cart.product[item].price)*currency.cad.bdt).toFixed(2);
+      subtotal = parseFloat(total) + parseFloat(subtotal);
+      txt += `<div id = "div${cart.product[item].id}"><tr>
+        <td>${cart.product[item].title}</td>
+        <td>CA$${((cart.product[item].price)).toFixed(2)}</td>
+        <td>${cart.product[item].quantity}</td>
+        <td>CA$${total} </td>
+        <td><button class = "remove" id = "remove-button-${cart.product[item].id}"> <span class="material-symbols-outlined">
+        delete
+        </span> </button>
+        </tr></div>`;
+}
+}});
 
   $("#empty-cart").click(function () {
     click = 0;
@@ -468,14 +550,14 @@ function usd_convert(element) {
 
 
 
-
+function cookies(){
 set_cookie("shopping_cart_items", cart.product);
 let data1 = get_cookie("shopping_cart_items");
 jQuery(".add-to-cart").click(function () {
   // get the product id from a data attribute of the button that looks like this:
   // Add To Cart
 
-  var product_id = jQuery(this).attr(id);
+  var product_id = jQuery(this).attr("id");
   var cart_items = get_cookie("shopping_cart_items"); // get the data stored as a "cookie"
 
   // initialize the cart items if it returns null
@@ -491,7 +573,9 @@ jQuery(".add-to-cart").click(function () {
   cart_items[product_id]++;
 
   set_cookie("shopping_cart_items", cart.product); // setting the cart items back to the "cookie" storage
+  displayAndRemove();
 });
+}
 
 
 //checkout
@@ -657,7 +741,10 @@ $("#continue-button-1").click(function (event) {
     validity = false;
   }
   if (validity == true) {
-    $("#continue-button-1").hide();
+    $('.btnNext').click(function() {
+      $('.nav-tabs .active').parent().next('li').find('a').trigger('click');
+      $("#continue-button-1").hide();
+    });
   }
 })
 
@@ -1108,4 +1195,3 @@ $("#continue-button-3").click(function (event) {
 
 /*$("#myModal").find("#continue-button-1").hide();
 $("#myModal").find("#continue-button-2").show();*/
-
