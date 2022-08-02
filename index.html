@@ -160,20 +160,20 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-              <li class="nav-item" role="presentation">
+            <ul class="nav nav-pills nav-fill" id="myTab" role="tablist">
+              <li class="nav-item" role="presentation" id = "tab1">
                 <a class="nav-link active" id="payment-details" data-bs-toggle="tab" data-bs-target="#payment"
                   type="button" role="tab" aria-controls="payment" aria-selected="true">Payment</a>
               </li>
-              <li class="nav-item" role="presentation">
+              <li class="nav-item" role="presentation" id = "tab2">
                 <a class="nav-link" id="billing-details" data-bs-toggle="tab" data-bs-target="#billing"
                   type="button" role="tab" aria-controls="billing" aria-selected="false">Billing</a>
               </li>
-              <li class="nav-item" role="presentation">
+              <li class="nav-item" role="presentation" id = "tab3">
                 <a class="nav-link" id="shipping-details" data-bs-toggle="tab" data-bs-target="#shipping"
                   type="button" role="tab" aria-controls="shipping" aria-selected="false">Shipping</a>
               </li>
-              <li class="nav-item" role="presentation">
+              <li class="nav-item" role="presentation" id = "tab4">
                 <a class="nav-link" id="confirm-order" data-bs-toggle="tab" data-bs-target="#order" type="button"
                   role="tab" aria-controls="order" aria-selected="false">Confirm Order</a>
               </li>
@@ -213,7 +213,7 @@
                                 <h6>Expiration Date</h6>
                               </span></label>
                             <div class="input-group"> <input type="number" placeholder="MM" name="" class="form-control"
-                                id="mm" required> <input type="number" placeholder="YY" name="" class="form-control"
+                                id="mm" required> <input type="number" placeholder="YY (2 Digits)" name="" class="form-control"
                                 id="yy" required>
                             </div>
                           </div>
@@ -256,7 +256,8 @@
 
                   <div class="col-12">
                     <label for="address" class="form-label">Address</label>
-                    <input type="text" class="form-control" id="address" placeholder="1234 Main St" required>
+                    <input type="text" class="form-control" id="address" placeholder="1234 Main St" list = "street_suggest" oninput="autocomplete_form()" required>
+                    <datalist id = "street_suggest"></datalist>
                   </div>
 
                   <div class="col-12">
@@ -265,14 +266,35 @@
                     <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
                   </div>
 
+                  
                   <div class="col-md-5">
-                    <label for="country" class="form-label">Country</label>
-                    <input type="text" class="form-control" id="country" placeholder="" required>
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" class="form-control" id="city" placeholder="" required>
                   </div>
 
                   <div class="col-md-4">
                     <label for="state" class="form-label">State</label>
-                    <input type="text" class="form-control" id="state" placeholder="" required>
+                    <input type="text" class="form-control" id="state" placeholder="" list="state_list" required>
+                    <datalist id = "state_list">
+                      <option>NL</option>
+                      <option>PE</option>
+                      <option>NS</option>
+                      <option>NB</option>
+                      <option>QC</option>
+                      <option>ON</option>
+                      <option>MB</option>
+                      <option>SK</option>
+                      <option>AB</option>
+                      <option>BC</option>
+                      <option>YT</option>
+                      <option>NT</option>
+                      <option>NU</option>
+                    </datalist>
+                  </div>
+
+                  <div class="col-md-5">
+                    <label for="country" class="form-label">Counrty</label>
+                    <input type="text" class="form-control" id="country" placeholder="" required>
                   </div>
 
                   <div class="col-md-3">
@@ -295,39 +317,60 @@
                   </p>
                   <div id="billing-shipping">
                     <div class="col-sm-6">
-                      <label for="firstName" class="form-label">First name</label>
+                      <label for="firstName_ship" class="form-label">First name</label>
                       <input type="text" class="form-control" id="firstName_ship" placeholder="" value="" required>
                     </div>
 
                     <div class="col-sm-6">
-                      <label for="lastName" class="form-label">Last name</label>
+                      <label for="lastName_ship" class="form-label">Last name</label>
                       <input type="text" class="form-control" id="lastName_ship" placeholder="" value="" required>
                     </div>
 
                     <div class="col-12">
-                      <label for="address" class="form-label">Address</label>
-                      <input type="text" class="form-control" id="address_ship" placeholder="1234 Main St" required>
+                      <label for="address_ship" class="form-label">Address</label>
+                      <input type="text" class="form-control" id="address_ship" placeholder="1234 Main St" list = "street_suggest_ship" oninput="autocomplete_form_ship()" required>
+                      <datalist id = "street_suggest_ship"></datalist>
                     </div>
 
                     <div class="col-12">
-                      <label for="address2" class="form-label">Address 2 <span
+                      <label for="address2_ship" class="form-label">Address 2 <span
                           class="text-muted">(Optional)</span></label>
                       <input type="text" class="form-control" id="address2_ship" placeholder="Apartment or suite">
                     </div>
 
                     <div class="col-md-5">
-                      <label for="country" class="form-label">Country</label>
+                      <label for="city_ship" class="form-label">City</label>
+                      <input type="text" class="form-control" id="city_ship" placeholder="" required>
+                    </div>
+
+                    <div class="col-md-4">
+                      <label for="state_ship" class="form-label">State</label>
+                      <input type="text" class="form-control" id="state_ship" list="state_list_ship" placeholder="" required>
+                      <datalist id = "state_list_ship">
+                        <option>NL</option>
+                        <option>PE</option>
+                        <option>NS</option>
+                        <option>NB</option>
+                        <option>QC</option>
+                        <option>ON</option>
+                        <option>MB</option>
+                        <option>SK</option>
+                        <option>AB</option>
+                        <option>BC</option>
+                        <option>YT</option>
+                        <option>NT</option>
+                        <option>NU</option>
+                      </datalist>
+                    </div>
+
+                    <div class="col-md-5">
+                      <label for="country_ship" class="form-label">Country</label>
                       <input type="text" class="form-control" id="country_ship" placeholder="" required>
 
                     </div>
 
-                    <div class="col-md-4">
-                      <label for="state" class="form-label">State</label>
-                      <input type="text" class="form-control" id="state_ship" placeholder="" required>
-                    </div>
-
                     <div class="col-md-3">
-                      <label for="zip" class="form-label">Zip</label>
+                      <label for="zip_ship" class="form-label">Zip</label>
                       <input type="text" class="form-control" id="zip_ship" placeholder="" required>
                     </div>
                   </div>
@@ -359,11 +402,11 @@
 
       </div>
       <div class="modal-footer">
-        <a class="btn btn-primary btnNext" id="continue-button-1" href="#billing">Continue
+        <a class="btn btn-primary btnNext" id="continue-button-1">Continue
         </a>
-        <a class="btn btn-primary btnNext" id="continue-button-2" href="#shipping">Continue
+        <a class="btn btn-primary btnNext" id="continue-button-2">Continue
         </a>
-        <a class="btn btn-primary btnNext" id="continue-button-3" href="#order">Continue
+        <a class="btn btn-primary btnNext" id="continue-button-3">Continue
         </a>
         <button type="submit" class="btn btn-primary" id="confirm-button">Confirm
         </button>
@@ -397,6 +440,20 @@
       </div>
     </div>
   </div>
+
+  
+<div class="modal fade" id="errorShow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        Failed to finalize your order. Please go back to checkout menu and correct the errors.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 

@@ -26,32 +26,21 @@ let cart = new Cart();
 $(".table").hide();
 $("#checkout").hide();
 $("#empty-cart").hide();
-//$("#myModal").find("#continue-button-2").hide();
-//$("#myModal").find("#continue-button-3").hide();
-//$("#myModal").find("#confirm-button").hide();
+$("#myModal").find("#continue-button-2").hide();
+$("#myModal").find("#continue-button-3").hide();
+$("#myModal").find("#confirm-button").hide();
 let data = {};
 
 //product fetch
 
 
-/*fetch().then((response) => {
-  if (response.ok) {
-    return response.json();
-  }
-  throw new Error('Something went wrong');
-})
-.then((responseJson) => {
-  // Do something with the response
-})
-.catch((error) => {
-  console.log(error)
-});*/
+
 
 
 window.onload = function () {
   fetch("https://fakestoreapi.com/products").
-    then((response) =>{ 
-      if(response.status===200){
+    then((response) => {
+      if (response.status === 200) {
         return response.json();
       }
       throw new Error("Something went wrong");
@@ -66,22 +55,25 @@ window.onload = function () {
     })
     .catch((error) => {
       fetch("https://deepblue.camosun.bc.ca/~c0180354/ics128/final/fakestoreapi.json").
-    then((response) =>{ 
-      if(response.status===200){
-        return response.json();
-      }
-      throw new Error("Something went wrong");
-    }).then((json) => {
-      data = json;
+        then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          }
+          throw new Error("Something went wrong");
+        }).then((json) => {
+          data = json;
 
-      data.forEach(productShow);
-      let catalog_container = document.getElementById("products"); // assuming your target is <div class='row' id='catalog'>
-      jQuery(catalog_container).imagesLoaded(function () {
-        let msnry = new Masonry(catalog_container); // this initializes the masonry container AFTER the product images are loaded
-      });
-    })
+          data.forEach(productShow);
+          let catalog_container = document.getElementById("products"); // assuming your target is <div class='row' id='catalog'>
+          jQuery(catalog_container).imagesLoaded(function () {
+            let msnry = new Masonry(catalog_container); // this initializes the masonry container AFTER the product images are loaded
+          });
+        })
     }).then(addCart).
-    then(cookies);
+    then(cookies).
+    catch((error) => {
+      $("#products").html(`Sorry Something went wrong. Please try again`);
+    });
 }
 
 //display the items
@@ -178,8 +170,8 @@ function displayAndRemove() {
   $("#body2").html(txt2);
   $("#item").html(`<b>Subtotal: </b><span id = "subtotal">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
-  $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal">CA$${parseFloat(shipping_cost).toFixed(2)}</span>`);
-  $("#tax").html(`<b>Tax: </b><span class = "subtotal">CA$${parseFloat(tax).toFixed(2)}</span>`);
+  $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost">CA$${parseFloat(shipping_cost).toFixed(2)}</span>`);
+  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "tax">CA$${parseFloat(tax).toFixed(2)}</span>`);
   if (Object.keys(cart.product).length == 0) {
     $("#empty-cart").hide();
     $(`.table`).hide();
@@ -219,9 +211,8 @@ function addCart() {
     $("#empty-cart").show();
     v_cart.value = `View Cart (${totalQty()})`;
     $("#order-cart").modal('show');
-    //$("#order-cart").fadeOut(300);
-    setTimeout(modalHide,800);
-    function modalHide(){
+    setTimeout(modalHide, 800);
+    function modalHide() {
       $("#order-cart").modal('hide');
     }
     changeCurrency();
@@ -232,10 +223,10 @@ function addCart() {
       for (let item in cart.product) {
 
         let total = 0;
-    
-        total = ((total + cart.product[item].quantity * cart.product[item].price)*currency.cad.usd).toFixed(2);
-    
-    
+
+        total = ((total + cart.product[item].quantity * cart.product[item].price) * currency.cad.usd).toFixed(2);
+
+
         subtotal = parseFloat(total) + parseFloat(subtotal);
         txt += `<div id = "div${cart.product[item].id}"><tr>
           <td>${cart.product[item].title}</td>
@@ -246,16 +237,16 @@ function addCart() {
           delete
           </span> </button>
           </tr></div>`;
-  }
-  }
-  if (value1 == "bdt") {
-    for (let item in cart.product) {
+      }
+    }
+    if (value1 == "bdt") {
+      for (let item in cart.product) {
 
-      let total = 0;
-  
-      total = ((total + cart.product[item].quantity * cart.product[item].price)*currency.cad.bdt).toFixed(2);
-      subtotal = parseFloat(total) + parseFloat(subtotal);
-      txt += `<div id = "div${cart.product[item].id}"><tr>
+        let total = 0;
+
+        total = ((total + cart.product[item].quantity * cart.product[item].price) * currency.cad.bdt).toFixed(2);
+        subtotal = parseFloat(total) + parseFloat(subtotal);
+        txt += `<div id = "div${cart.product[item].id}"><tr>
         <td>${cart.product[item].title}</td>
         <td>CA$${((cart.product[item].price)).toFixed(2)}</td>
         <td>${cart.product[item].quantity}</td>
@@ -264,8 +255,9 @@ function addCart() {
         delete
         </span> </button>
         </tr></div>`;
-}
-}});
+      }
+    }
+  });
 
   $("#empty-cart").click(function () {
     click = 0;
@@ -371,8 +363,6 @@ function cad_convert(element) {
     let buttonID = this.id.slice(14, 16);
     for (let item in cart.product) {
       if (cart.product[item].id == buttonID) {
-        //$("#view-cart").val(`View Cart (${totalQty()})`);
-
         cart.removeItem(cart.product[item]);
         displayAndRemove();
         changeCurrency();
@@ -550,31 +540,31 @@ function usd_convert(element) {
 
 
 
-function cookies(){
-set_cookie("shopping_cart_items", cart.product);
-let data1 = get_cookie("shopping_cart_items");
-jQuery(".add-to-cart").click(function () {
-  // get the product id from a data attribute of the button that looks like this:
-  // Add To Cart
+function cookies() {
+  set_cookie("shopping_cart_items", cart.product);
+  let data1 = get_cookie("shopping_cart_items");
+  jQuery(".add-to-cart").click(function () {
+    // get the product id from a data attribute of the button that looks like this:
+    // Add To Cart
 
-  var product_id = jQuery(this).attr("id");
-  var cart_items = get_cookie("shopping_cart_items"); // get the data stored as a "cookie"
+    var product_id = jQuery(this).attr("id");
+    var cart_items = get_cookie("shopping_cart_items"); // get the data stored as a "cookie"
 
-  // initialize the cart items if it returns null
-  if (cart_items === null) {
-    cart_items = {};
-  }
+    // initialize the cart items if it returns null
+    if (cart_items === null) {
+      cart_items = {};
+    }
 
-  // make sure the object is defined;
-  if (cart_items[product_id] === undefined) {
-    cart_items[product_id] = 0;
-  }
+    // make sure the object is defined;
+    if (cart_items[product_id] === undefined) {
+      cart_items[product_id] = 0;
+    }
 
-  cart_items[product_id]++;
+    cart_items[product_id]++;
 
-  set_cookie("shopping_cart_items", cart.product); // setting the cart items back to the "cookie" storage
-  displayAndRemove();
-});
+    set_cookie("shopping_cart_items", cart.product); // setting the cart items back to the "cookie" storage
+    displayAndRemove();
+  });
 }
 
 
@@ -587,24 +577,23 @@ $("#checkout").click(function () {
 
 
 
-$("#confirm-button").click(function () {
-  $('#confirmation').modal('show');
-  $('#myModal').modal('hide');
-  cart.emptyCart();
-  $("#empty-cart").hide();
-  $(".table").hide();
-  $("#begin").show();
-  $("#body").html("");
-  $("#view-cart").val("View Cart");
-  $("#checkout").hide();
-  $("#item").hide();
-});
+
+
+/*const searchInput = document.querySelector('.search-input');
+const suggestions = document.querySelector('.suggestions');
+ 
+searchInput.addEventListener('change', displayMatches);
+searchInput.addEventListener('keyup', displayMatches);
+*/
+
+
+
 
 $("#continue-button-1").click(function (event) {
   //prevent from submitting
   event.preventDefault();
   //keeo track of validity
-  let visaRegEx = /^4[0-9]{12}(?:[0-9]{2}[1-9]{1})?$/;
+  let visaRegEx = /^4[0-9]{12}(?:[0-9]{3})?$/;
   var mastercardRegEx = /^5[1-5][0-9]{14}$|^2(?:2(?:2[1-9]|[3-9][0-9])|[3-6][0-9][0-9]|7(?:[01][0-9]|20))[0-9]{12}$/;
   var amexpRegEx = /^3[47][0-9]{13}$/;
   let value = $("#card-num").val();
@@ -668,6 +657,7 @@ $("#continue-button-1").click(function (event) {
       title: "Invalid Month"
     });
     validity = false;
+
   }
 
   //yy
@@ -741,19 +731,23 @@ $("#continue-button-1").click(function (event) {
     validity = false;
   }
   if (validity == true) {
-    $('.btnNext').click(function() {
-      $('.nav-tabs .active').parent().next('li').find('a').trigger('click');
-      $("#continue-button-1").hide();
-    });
+    $("#billing-details").trigger('click');
+    $("#continue-button-1").hide();
+    $("#continue-button-2").show();
+
   }
-})
+
+}
+
+);
+
 
 $("#continue-button-2").click(function (event) {
-  /*$("#myModal").find("#continue-button-2").hide();
-  $("#myModal").find("#continue-button-3").show();*/
+  /**/
   event.preventDefault();
   let validity = true;
   let name = /^[a-z ,.'-]+$/i;
+
   if ($("#firstName").val() == "") {
     $("#firstName").addClass("is-invalid");
     $("#firstName").removeClass("is-valid");
@@ -884,9 +878,7 @@ $("#continue-button-2").click(function (event) {
   }
 
   //address
-
   let address_regex = /^[a-zA-Z0-9\s,'-]*$/;
-
   if ($("#address").val() == "") {
     $("#address").addClass("is-invalid");
     $("#address").removeClass("is-valid");
@@ -952,6 +944,28 @@ $("#continue-button-2").click(function (event) {
     });
     validity = false;
   }
+//city
+  if ($("#city").val() == "") {
+    $("#city").addClass("is-invalid");
+    $("#city").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip('#city', {
+      title: "City Name cannot be blank"
+    });
+    validity = false;
+  } else if (($("#city").val()).match(name)) {
+    $("#city").removeClass("is-invalid");
+    $("#city").addClass("is-valid");
+    if ($("#city").tooltip != undefined) {
+      $("#city").tooltip("dispose");
+    }
+  } else {
+    $("#city").addClass("is-invalid");
+    $("#city").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip('#city', {
+      title: "Invalid City Name"
+    });
+    validity = false;
+  }
   //state
   if ($("#state").val() == "") {
     $("#state").addClass("is-invalid");
@@ -986,24 +1000,31 @@ $("#continue-button-2").click(function (event) {
     let tooltip = new bootstrap.Tooltip('#zip', {
       title: "Zip Code cannot be blank"
     });
+    validity = false;
   } else if (zip.match(validation)) {
     $("#zip").removeClass("is-invalid");
     $("#zip").addClass("is-valid");
     if ($("#zip").tooltip != undefined) {
-      $("zip").tooltip("dispose");
+      $("#zip").tooltip("dispose");
     }
-  } else if (input[0].match(invalid) || input[2].match(invalid1) || input[4].match(invalid1)) {
+  } else if (zip[0].match(invalid) || zip[2].match(invalid1) || zip[4].match(invalid1)) {
     $("#zip").addClass("is-invalid");
     $("#zip").removeClass("is-valid");
     let tooltip = new bootstrap.Tooltip('#zip', {
       title: "Invalid Postal Code: Doesn't meet the correct letters"
     });
+    validity = false;
   } else {
     $("#zip").addClass("is-invalid");
     $("#zip").removeClass("is-valid");
     let tooltip = new bootstrap.Tooltip('#zip', {
       title: "Invalid Postal Code: Doesn't meet the correct format (ANANAN / ANA NAN)"
     });
+    validity = false;
+  }
+  if (validity == true) {
+    $("#myModal").find("#continue-button-2").hide();
+    $("#myModal").find("#continue-button-3").show();
   }
 
 })
@@ -1013,13 +1034,27 @@ $('#shipping_billing_same').change(function () {
     $("#myModal").find(`#billing-shipping`).show();
   } else {
     $("#myModal").find(`#billing-shipping`).hide();
+    let fname = $(`#firstName`).val();
+    let lname = $(`#lastName`).val();
+    let ad1 = $(`#address`).val();
+    let ad2 = $(`#address2`).val();
+    let country = $(`#country`).val();
+    let city = $(`#city`).val();
+    let zipShip = $(`#zip`).val();
+    let state = $(`#state`).val();
+    document.getElementById("firstName_ship").value = fname;
+    document.getElementById("lastName_ship").value = lname;
+    document.getElementById("address_ship").value = ad1;
+    document.getElementById("address2_ship").value = ad2;
+    document.getElementById("country_ship").value = country;
+    document.getElementById("city_ship").value = city;
+    document.getElementById("state_ship").value = state;
+    document.getElementById("zip_ship").value = zipShip;
+
   }
 });
 
 $("#continue-button-3").click(function (event) {
-  if ($('input[id="shipping_billing_same"]:checked').length > 0) {
-    $("#myModal").find("#continue-button-3").hide();
-  }
   event.preventDefault();
   let validity = true;
   let name = /^[a-z ,.'-]+$/i;
@@ -1122,7 +1157,7 @@ $("#continue-button-3").click(function (event) {
     $("#country_ship").removeClass("is-invalid");
     $("#country_ship").addClass("is-valid");
     if ($("#country_ship").tooltip != undefined) {
-      $("country_ship").tooltip("dispose");
+      $("#country_ship").tooltip("dispose");
     }
   } else {
     $("#country_ship").addClass("is-invalid");
@@ -1132,6 +1167,29 @@ $("#continue-button-3").click(function (event) {
     });
     validity = false;
   }
+
+  if ($("#city_ship").val() == "") {
+    $("#city_ship").addClass("is-invalid");
+    $("#city_ship").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip('#city_ship', {
+      title: "City Name cannot be blank"
+    });
+    validity = false;
+  } else if (($("#city_ship").val()).match(name)) {
+    $("#city_ship").removeClass("is-invalid");
+    $("#city_ship").addClass("is-valid");
+    if ($("#city_ship").tooltip != undefined) {
+      $("#city_ship").tooltip("dispose");
+    }
+  } else {
+    $("#city_ship").addClass("is-invalid");
+    $("#city_ship").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip('#city_ship', {
+      title: "Invalid City Name"
+    });
+    validity = false;
+  }
+
   //state
   if ($("#state_ship").val() == "") {
     $("#state_ship").addClass("is-invalid");
@@ -1166,32 +1224,346 @@ $("#continue-button-3").click(function (event) {
     let tooltip = new bootstrap.Tooltip('#zip_ship', {
       title: "Zip Code cannot be blank"
     });
+    validity = false;
   } else if (zip.match(validation)) {
     $("#zip_ship").removeClass("is-invalid");
     $("#zip_ship").addClass("is-valid");
     if ($("#zip_ship").tooltip != undefined) {
       $("zip_ship").tooltip("dispose");
     }
-  } else if (input[0].match(invalid) || input[2].match(invalid1) || input[4].match(invalid1)) {
+  } else if (zip[0].match(invalid) || zip[2].match(invalid1) || zip[4].match(invalid1)) {
     $("#zip_ship").addClass("is-invalid");
     $("#zip_ship").removeClass("is-valid");
     let tooltip = new bootstrap.Tooltip('#zip_ship', {
       title: "Invalid Postal Code: Doesn't meet the correct letters"
     });
+    validity = false;
   } else {
     $("#zip_ship").addClass("is-invalid");
     $("#zip_ship").removeClass("is-valid");
     let tooltip = new bootstrap.Tooltip('#zip_ship', {
       title: "Invalid Postal Code: Doesn't meet the correct format (ANANAN / ANA NAN)"
     });
+    validity = false;
   }
 
-
-  /*$("#myModal").find("#continue-button-3").hide();
-  $("#myModal").find("#confirm-button").show();*/
+  if (validity == true) {
+    $("#myModal").find("#continue-button-3").hide();
+    $("#myModal").find("#confirm-button").show();
+  }
 
 })
 
 
 /*$("#myModal").find("#continue-button-1").hide();
 $("#myModal").find("#continue-button-2").show();*/
+
+function autocomplete_form() {
+  let num;
+  let text;
+  let data = {};
+  let html1 = "";
+  let address_array = [];
+  let splited = $("#address").val().split(" ");
+  num = splited[0];
+  text = splited[1];
+  fetch(`https://geocoder.ca/?autocomplete=1&geoit=xml&auth=test&json=1&locate=${num}%20${text}`).
+    then(response => response.json()).
+    then((json) => {
+      data = json;
+      //console.log(data.streets.street);
+      //console.log(typeof (data.streets.street))
+      if (typeof (data.streets.street) == "object") {
+        for (let i = 0; i < Object.keys(data.streets.street).length; i++) {
+          address_array.push(data.streets.street[i]);
+        }
+        for (let i = 0; i < 3; i++) {
+          //console.log(address_array[i]);
+          html1 += `<option id = "option${i}">${address_array[i]}</option>`
+        }
+
+        //console.log(address_array);
+      } if (typeof (data.streets.street) == "string") {
+        //console.log(data.streets.street);
+        html1 = `<option id = "option1">${data.streets.street}</option>`
+      }
+
+
+
+      $(`#street_suggest`).append(html1);
+
+      let selectedText = $("#address").val();
+
+      let division = selectedText.split(", ");
+      console.log(division);
+
+      if (division[3] != undefined) {
+        document.getElementById("address").value = division[0];
+        document.getElementById("city").value = division[1];
+        document.getElementById("state").value = division[2];
+        document.getElementById("zip").value = division[3];
+        document.getElementById("country").value = "Canada";
+      }
+
+
+
+
+
+    })
+  html1 = "";
+  $(`#street_suggest`).empty();
+  address_array = [];
+
+}
+
+function autocomplete_form_ship() {
+  let num;
+  let text;
+  let data = {};
+  let html1 = "";
+  let address_array = [];
+  let splited = $("#address_ship").val().split(" ");
+  num = splited[0];
+  text = splited[1];
+  fetch(`https://geocoder.ca/?autocomplete=1&geoit=xml&auth=test&json=1&locate=${num}%20${text}`).
+    then(response => response.json()).
+    then((json) => {
+      data = json;
+      //console.log(data.streets.street);
+      //console.log(typeof (data.streets.street))
+      if (typeof (data.streets.street) == "object") {
+        for (let i = 0; i < Object.keys(data.streets.street).length; i++) {
+          address_array.push(data.streets.street[i]);
+        }
+        for (let i = 0; i < 3; i++) {
+          //console.log(address_array[i]);
+          html1 += `<option id = "option${i}">${address_array[i]}</option>`
+        }
+
+        //console.log(address_array);
+      } if (typeof (data.streets.street) == "string") {
+        //console.log(data.streets.street);
+        html1 = `<option id = "option1">${data.streets.street}</option>`
+      }
+
+
+
+      $(`#street_suggest_ship`).append(html1);
+
+      let selectedText = $("#address_ship").val();
+
+      let division = selectedText.split(", ");
+      console.log(division);
+
+      if (division[3] != undefined) {
+        document.getElementById("address_ship").value = division[0];
+        document.getElementById("city_ship").value = division[1];
+        document.getElementById("state_ship").value = division[2];
+        document.getElementById("zip_ship").value = division[3];
+        document.getElementById("country_ship").value = "Canada";
+      }
+
+
+
+
+
+    })
+  html1 = "";
+  $(`#street_suggest_ship`).empty();
+  address_array = [];
+
+}
+
+
+
+
+
+
+$("#confirm-button").click(function () {
+  final_json();
+});
+
+function final_json() {
+  let data = {};
+  let items = cart.product;
+  let final_json_send = {
+    "card_number": $(`#card-num`).val(),
+    "expiry_month": $(`#mm`).val(),
+    "expiry_year": "20" + $(`#yy`).val(),
+    "security_code": $(`#cvv`).val(),
+    "amount": $(`#mm`).val(),
+    "taxes": $("#tax").val(),
+    "shipping_amount": $("#shipping_cost").val(),
+    "currency": $(`#select`).val(),
+    "items": items,
+    "billing": {
+      "first_name": $(`#firstName`).val(),
+      "last_name": $(`#lastName`).val(),
+      "address_1": $(`#address`).val(),
+      "address_2": $(`#address2`).val(),
+      "city": $(`#city`).val(),
+      "province": $(`#state`).val(),
+      "country": $(`#country`).val(),
+      "postal": $(`#zip`).val(),
+      "phone": $(`#phone`).val(),
+      "email": $(`#email`).val()
+    },
+    "shipping": {
+      "first_name": $(`#firstName_ship`).val(),
+      "last_name": $(`#lastName_ship`).val(),
+      "address_1": $(`#address_ship`).val(),
+      "address_2": $(`#address2_ship`).val(),
+      "city": $(`#city_ship`).val(),
+      "province": $(`#state_ship`).val(),
+      "country": $(`#country_ship`).val(),
+      "postal": $(`#zip_ship`).val()
+    }
+
+
+  }
+  console.log(JSON.stringify(final_json_send.items));
+  let formdata = new FormData();
+  formdata.append('submission', JSON.stringify(final_json_send));
+  let response = fetch('https://deepblue.camosun.bc.ca/~c0180354/ics128/final/', {
+    method: 'POST',
+    body: formdata
+  }).then(response => response.json()).
+    then((json) => {
+      data = json;
+      console.log(data);
+      console.log(data.status);
+      if (data.status == "NOT SUBMITTED") {
+        post_validation(data);
+      } else {
+        $('#confirmation').modal('show');
+        $('#myModal').modal('hide');
+        cart.emptyCart();
+        $("#empty-cart").hide();
+        $(".table").hide();
+        $("#begin").show();
+        $("#body").html("");
+        $("#view-cart").val("View Cart");
+        $("#checkout").hide();
+        $("#item").hide();
+      }
+    })
+}
+
+function post_validation(data) {
+  if (data.error.card_number != undefined) {
+    $("#card-num").addClass("is-invalid");
+    $("#card-num").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#card-num", {
+      title: `${data.error.card_number}`
+    });
+  }
+  if(data.error.expiry_year != undefined){
+    $("#yy").addClass("is-invalid");
+    $("#yy").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#yy", {
+      title: `${data.error.expiry_year}`
+    });
+  }
+  if(data.error.expiry_month != undefined){
+    $("#mm").addClass("is-invalid");
+    $("#mm").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#mm", {
+      title: `${data.error.expiry_month}`
+    });
+  }
+  if(data.error.security_code != undefined){
+    $("#cvv").addClass("is-invalid");
+    $("#cvv").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#cvv", {
+      title: `${data.error.security_code}`
+    });
+  }
+  if(data.error.billing.first_name != undefined){
+    $("#firstName").addClass("is-invalid");
+    $("#firstName").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#firstName", {
+      title: `${data.error.billing.first_name}`
+    });
+  }
+  if(data.error.billing.last_name != undefined){
+    $("#lastName").addClass("is-invalid");
+    $("#lastName").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#lastName", {
+      title: `${data.error.billing.last_name}`
+    });
+  }
+  if(data.error.billing.address_1 != undefined){
+    $("#address").addClass("is-invalid");
+    $("#address").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#address", {
+      title: `${data.error.billing.address_1}`
+    });
+  }
+  if(data.error.billing.city != undefined){
+    $("#city").addClass("is-invalid");
+    $("#city").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#city", {
+      title: `${data.error.billing.city}`
+    });
+  }
+  if(data.error.billing.email != undefined){
+    $("#email").addClass("is-invalid");
+    $("#email").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#email", {
+      title: `${data.error.billing.email}`
+    });
+  }
+  if(data.error.billing.phone != undefined){
+    $("#phone").addClass("is-invalid");
+    $("#phone").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#phone", {
+      title: `${data.error.billing.phone}`
+    });
+  }
+  if(data.error.billing.province != undefined){
+    $("#state").addClass("is-invalid");
+    $("#state").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#state", {
+      title: `${data.error.billing.province}`
+    });
+  }
+  if(data.error.shipping.first_name != undefined){
+    $("#firstName_ship").addClass("is-invalid");
+    $("#firstName_ship").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#firstName_ship", {
+      title: `${data.error.shipping.first_name}`
+    });
+  }
+  if(data.error.shipping.last_name != undefined){
+    $("#lastName_ship").addClass("is-invalid");
+    $("#lastName_ship").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#lastName_ship", {
+      title: `${data.error.shipping.last_name}`
+    });
+  }
+  if(data.error.shipping.address_1 != undefined){
+    $("#address_ship").addClass("is-invalid");
+    $("#address_ship").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#address_ship", {
+      title: `${data.error.shipping.address_1}`
+    });
+  }
+  if(data.error.shipping.city != undefined){
+    $("#city_ship").addClass("is-invalid");
+    $("#city_ship").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#city_ship", {
+      title: `${data.error.shipping.city}`
+    });
+  }
+  if(data.error.shipping.province != undefined){
+    $("#state_ship").addClass("is-invalid");
+    $("#state_ship").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#state_ship", {
+      title: `${data.error.shipping.province}`
+    });
+  }
+  $(`#errorShow`).modal('show');
+
+
+}
+
