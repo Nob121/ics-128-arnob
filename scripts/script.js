@@ -171,10 +171,10 @@ function displayAndRemove() {
 
   $("#body").html(txt);
   $("#body2").html(txt2);
-  $("#item").html(`<b>Subtotal: </b><span id = "subtotal">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
-  $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
-  $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost">CA$${parseFloat(shipping_cost).toFixed(2)}</span>`);
-  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax">CA$${parseFloat(tax).toFixed(2)}</span>`);
+  $("#item").html(`<b>Subtotal: </b><span id = "subtotal" value = "${parseFloat(subtotal).toFixed(2)}">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
+  $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal" value = "${parseFloat(subtotal).toFixed(2)}">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
+  $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost" value = "${parseFloat(shipping_cost).toFixed(2)}">CA$${parseFloat(shipping_cost).toFixed(2)}</span>`);
+  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax" value = "${parseFloat(tax).toFixed(2)}">CA$${parseFloat(tax).toFixed(2)}</span>`);
   if (Object.keys(cart.product).length == 0) {
     $("#empty-cart").hide();
     $(`.table`).hide();
@@ -351,10 +351,10 @@ function cad_convert(element) {
 
   $("#body").html(txt);
   $("#body2").html(txt2);
-  $("#item").html(`<b>Subtotal: </b><span id = "subtotal">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
-  $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
-  $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal">CA$${parseFloat(shipping_cost).toFixed(2)}</span>`);
-  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax">CA$${parseFloat(tax).toFixed(2)}</span>`);
+  $("#item").html(`<b>Subtotal: </b><span id = "subtotal" value = "${parseFloat(subtotal).toFixed(2)}">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
+  $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal" ${parseFloat(subtotal).toFixed(2)}>CA$${parseFloat(subtotal).toFixed(2)}</span>`);
+  $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost" value = "${parseFloat(shipping_cost).toFixed(2)}">CA$${parseFloat(shipping_cost).toFixed(2)}</span>`);
+  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax" value = "${parseFloat(tax).toFixed(2)}">CA$${parseFloat(tax).toFixed(2)}</span>`);
   if (Object.keys(cart.product).length == 0) {
     $(`.table`).hide();
     $(`#begin`).show();
@@ -433,10 +433,10 @@ function bdt_convert(element) {
 
   $("#body").html(txt);
   $("#body2").html(txt2);
-  $("#item").html(`<b>Subtotal: </b><span id = "subtotal">&#2547;${parseFloat(subtotal).toFixed(2)}</span>`);
+  $("#item").html(`<b>Subtotal: </b><span id = "subtotal" value = "${parseFloat(subtotal).toFixed(2)}">&#2547;${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">&#2547;${parseFloat(subtotal).toFixed(2)}</span>`);
-  $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal">&#2547;${parseFloat(shipping_cost).toFixed(2)}</span>`);
-  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax">&#2547;${parseFloat(tax_bdt).toFixed(2)}</span>`);
+  $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost" value = "${parseFloat(shipping_cost).toFixed(2)}">&#2547;${parseFloat(shipping_cost).toFixed(2)}</span>`);
+  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax" value = "${parseFloat(tax).toFixed(2)}">&#2547;${parseFloat(tax_bdt).toFixed(2)}</span>`);
   if (Object.keys(cart.product).length == 0) {
     $(`.table`).hide();
     $(`#begin`).show();
@@ -512,10 +512,10 @@ function usd_convert(element) {
 
   $("#body").html(txt);
   $("#body2").html(txt2);
-  $("#item").html(`<b>Subtotal: </b><span id = "subtotal">$${parseFloat(subtotal).toFixed(2)}</span>`);
+  $("#item").html(`<b>Subtotal: </b><span id = "subtotal" value = "${parseFloat(subtotal).toFixed(2)}">$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">$${parseFloat(subtotal).toFixed(2)}</span>`);
-  $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal">$${parseFloat(shipping_cost).toFixed(2)}</span>`);
-  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax">$${parseFloat(tax_usd).toFixed(2)}</span>`);
+  $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost" value = "${parseFloat(shipping_cost).toFixed(2)}">$${parseFloat(shipping_cost).toFixed(2)}</span>`);
+  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax" value = "${parseFloat(tax).toFixed(2)}">$${parseFloat(tax_usd).toFixed(2)}</span>`);
   if (Object.keys(cart.product).length == 0) {
     $(`.table`).hide();
     $(`#begin`).show();
@@ -1490,14 +1490,17 @@ $("#confirm-button").click(function () {
 function final_json() {
   let data = {};
   let items = cart.product;
+  let amount = document.getElementById("subtotal").getAttribute("value");
+  let taxes = document.getElementById("st_tax").getAttribute("value");
+  let shipping = document.getElementById("shipping_cost").getAttribute("value");
   let final_json_send = {
     "card_number": $(`#card-num`).val(),
     "expiry_month": $(`#mm`).val(),
     "expiry_year": "20" + $(`#yy`).val(),
     "security_code": $(`#cvv`).val(),
-    "amount": $(`#mm`).val(),
-    "taxes": $("#tax").val(),
-    "shipping_amount": $("#shipping_cost").val(),
+    "amount": amount,
+    "taxes": taxes,
+    "shipping_amount": shipping,
     "currency": $(`#select`).val(),
     "items": items,
     "billing": {
