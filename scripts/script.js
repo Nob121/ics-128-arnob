@@ -88,7 +88,7 @@ function productShow(element) {
     <div class="card-body">
       <h5 class="card-title">${element.title}</h5>
       
-      <p class = "price" id = "price${button + 1}">Price: ${element.price} CAD</p>
+      <p class = "price" id = "price${button + 1}">Price: ${(element.price).toFixed(2)} CAD</p>
       <p class="card-text">${element.description}</p>
       <button class = "add-to-cart" id = "button-${button + 1}" onclick= addToCart(${element.id})>Add to Cart</button>
       </div>
@@ -127,6 +127,7 @@ function addToCart(id) {
 }
 let quantity = 0;
 //showing in the cart
+let st_for_tax = 0;
 function displayAndRemove() {
   let txt = "";
   let txt2 = "";
@@ -142,6 +143,7 @@ function displayAndRemove() {
 
     total = (total + cart.product[item].quantity * cart.product[item].price).toFixed(2);
     subtotal = parseFloat(total) + parseFloat(subtotal);
+    st_for_tax = subtotal;
     txt += `<div id = "div${cart.product[item].id}"><tr>
       <td>${cart.product[item].title}</td>
       <td>CA$${(cart.product[item].price).toFixed(2)}</td>
@@ -162,8 +164,9 @@ function displayAndRemove() {
 
 
   }
-  let tax = parseFloat((subtotal * 7) / 100).toFixed(2);
+
   let order_total = parseFloat(tax) + parseFloat(shipping_cost) + parseFloat(subtotal);
+
   $("#order-total").html(`<b>Order Total: </b><span class = "subtotal"><b>CA$${parseFloat(order_total).toFixed(2)}</b></span>`);
 
   $("#body").html(txt);
@@ -171,7 +174,7 @@ function displayAndRemove() {
   $("#item").html(`<b>Subtotal: </b><span id = "subtotal">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost">CA$${parseFloat(shipping_cost).toFixed(2)}</span>`);
-  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "tax">CA$${parseFloat(tax).toFixed(2)}</span>`);
+  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax">CA$${parseFloat(tax).toFixed(2)}</span>`);
   if (Object.keys(cart.product).length == 0) {
     $("#empty-cart").hide();
     $(`.table`).hide();
@@ -321,6 +324,7 @@ function cad_convert(element) {
 
 
     subtotal = parseFloat(total) + parseFloat(subtotal);
+    st_for_tax = subtotal;
     txt += `<div id = "div${cart.product[item].id}"><tr>
       <td>${cart.product[item].title}</td>
       <td>CA$${((cart.product[item].price)).toFixed(2)}</td>
@@ -341,7 +345,7 @@ function cad_convert(element) {
 
 
   }
-  let tax = parseFloat((subtotal * 7) / 100).toFixed(2);
+
   let order_total = parseFloat(tax) + parseFloat(shipping_cost) + parseFloat(subtotal);
   $("#order-total").html(`<b>Order Total: </b><span class = "subtotal"><b>CA$${parseFloat(order_total).toFixed(2)}</b></span>`);
 
@@ -350,7 +354,7 @@ function cad_convert(element) {
   $("#item").html(`<b>Subtotal: </b><span id = "subtotal">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal">CA$${parseFloat(shipping_cost).toFixed(2)}</span>`);
-  $("#tax").html(`<b>Tax: </b><span class = "subtotal">CA$${parseFloat(tax).toFixed(2)}</span>`);
+  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax">CA$${parseFloat(tax).toFixed(2)}</span>`);
   if (Object.keys(cart.product).length == 0) {
     $(`.table`).hide();
     $(`#begin`).show();
@@ -388,7 +392,7 @@ function bdt_convert(element) {
   displayAndRemove();
   let txt = "";
   let txt2 = "";
-  subtotal = parseFloat(parseInt(totalQty()) * 5 * currency.cad.bdt);
+  subtotal = 0;
 
   let shipping_cost = parseFloat(parseInt(totalQty()) * 5 * currency.cad.bdt);
 
@@ -400,6 +404,7 @@ function bdt_convert(element) {
     total = ((total + cart.product[item].quantity * cart.product[item].price) * currency.cad.bdt).toFixed(2);
 
     subtotal = parseFloat(total) + parseFloat(subtotal);
+    st_for_tax = subtotal;
     txt += `<div id = "div${cart.product[item].id}"><tr>
       <td>${cart.product[item].title}</td>
       <td>&#2547;${((cart.product[item].price) * currency.cad.bdt).toFixed(2)}</td>
@@ -420,8 +425,10 @@ function bdt_convert(element) {
 
 
   }
-  let tax = parseFloat((subtotal * 7) / 100).toFixed(2);
-  let order_total = parseFloat(tax) + parseFloat(shipping_cost) + parseFloat(subtotal);
+
+
+  let tax_bdt = tax * currency.cad.bdt;
+  let order_total = parseFloat(tax_bdt) + parseFloat(shipping_cost) + parseFloat(subtotal);
   $("#order-total").html(`<b>Order Total: </b><span class = "subtotal"><b>&#2547;${parseFloat(order_total).toFixed(2)}</b></span>`);
 
   $("#body").html(txt);
@@ -429,7 +436,7 @@ function bdt_convert(element) {
   $("#item").html(`<b>Subtotal: </b><span id = "subtotal">&#2547;${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">&#2547;${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal">&#2547;${parseFloat(shipping_cost).toFixed(2)}</span>`);
-  $("#tax").html(`<b>Tax: </b><span class = "subtotal">&#2547;${parseFloat(tax).toFixed(2)}</span>`);
+  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax">&#2547;${parseFloat(tax_bdt).toFixed(2)}</span>`);
   if (Object.keys(cart.product).length == 0) {
     $(`.table`).hide();
     $(`#begin`).show();
@@ -475,6 +482,7 @@ function usd_convert(element) {
 
     total = ((total + cart.product[item].quantity * cart.product[item].price) * currency.cad.usd).toFixed(2);
     subtotal = parseFloat(total) + parseFloat(subtotal);
+    st_for_tax = subtotal;
 
     txt += `<div id = "div${cart.product[item].id}"><tr>
       <td>${cart.product[item].title}</td>
@@ -496,9 +504,10 @@ function usd_convert(element) {
 
 
   }
-  let tax = parseFloat((subtotal * 7) / 100).toFixed(2);
-  let order_total = parseFloat(tax) + parseFloat(shipping_cost) + parseFloat(subtotal);
 
+
+  let tax_usd = tax * currency.cad.usd;
+  let order_total = parseFloat(tax_usd) + parseFloat(shipping_cost) + parseFloat(subtotal);
   $("#order-total").html(`<b>Order Total: </b><span class = "subtotal">$${parseFloat(order_total).toFixed(2)}</span>`);
 
   $("#body").html(txt);
@@ -506,7 +515,7 @@ function usd_convert(element) {
   $("#item").html(`<b>Subtotal: </b><span id = "subtotal">$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal">$${parseFloat(shipping_cost).toFixed(2)}</span>`);
-  $("#tax").html(`<b>Tax: </b><span class = "subtotal">$${parseFloat(tax).toFixed(2)}</span>`);
+  $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax">$${parseFloat(tax_usd).toFixed(2)}</span>`);
   if (Object.keys(cart.product).length == 0) {
     $(`.table`).hide();
     $(`#begin`).show();
@@ -535,8 +544,54 @@ function usd_convert(element) {
   )
 
 }
+let tax = 0;
 
+function tax_calculator() {
+  let option1 = document.getElementById("select");
+  let value1 = select.options[option1.selectedIndex].value;
+  let state = $(`#state_ship`).val();
+  if ((state == "BC") || (state == "AB") || (state == "MB") || (state == "QC") || (state == "SK") || (state == "NT") || (state == "NU") || (state == "YT")) {
+    tax = ((st_for_tax * 5) / 100).toFixed(2);
+    if (value1 == "cad") {
+      $(`#st_tax`).html(`CA$${tax}`);
+    } else if (value1 == "usd") {
+      $(`#st_tax`).html(`$${(tax * currency.cad.usd).toFixed(2)}`);
+    } else {
+      $(`#st_tax`).html(`৳${(tax * currency.cad.bdt).toFixed(2)}`);
+    }
+  } else if (state == "ON") {
+    tax = ((st_for_tax * 13) / 100).toFixed(2);
+    if (value1 == "cad") {
+      $(`#st_tax`).html(`CA$${tax}`);
+    } else if (value1 == "usd") {
+      $(`#st_tax`).html(`$${(tax * currency.cad.usd).toFixed(2)}`);
+    } else {
+      $(`#st_tax`).html(`৳${(tax * currency.cad.bdt).toFixed(2)}`);
+    }
+  } else if ((state == "PE") || (state == "NL") || (state == "NS") || (state == "NB")) {
+    tax = ((st_for_tax * 15) / 100).toFixed(2);
+    if (value1 == "cad") {
+      $(`#st_tax`).html(`CA$${tax}`);
+    } else if (value1 == "usd") {
+      $(`#st_tax`).html(`$${(tax * currency.cad.usd).toFixed(2)}`);
+    } else {
+      $(`#st_tax`).html(`৳${(tax * currency.cad.bdt).toFixed(2)}`);
+    }
+  } else {
+    tax = 0;
+    if (value1 == "cad") {
+      $(`#st_tax`).html(`CA$${tax}`);
+    } else if (value1 == "usd") {
+      $(`#st_tax`).html(`$${(tax * currency.cad.usd).toFixed(2)}`);
+    } else {
+      $(`#st_tax`).html(`৳${(tax * currency.cad.bdt).toFixed(2)}`);
+    }
+  }
+  displayAndRemove();
 
+}
+
+document.getElementById("state_ship").addEventListener("change", tax_calculator);
 
 
 
@@ -613,18 +668,40 @@ $("#continue-button-1").click(function (event) {
     if ($("#card-num").tooltip != undefined) {
       $("#card-num").tooltip("dispose");
     }
+  } else if (($('input[name="paymentMethod"]:checked').val() == "visa") && (!($("#card-num").val()).match(visaRegEx))) {
+    $("#card-num").removeClass("is-valid");
+    $("#card-num").addClass("is-invalid");
+    let tooltip = new bootstrap.Tooltip("#card-num", {
+      title: "Invalid VISA Card Number"
+    });
+    validity = false;
   } else if (($('input[name="paymentMethod"]:checked').val() == "mastercard") && ($("#card-num").val()).match(mastercardRegEx)) {
     $("#card-num").addClass("is-valid");
     $("#card-num").removeClass("is-invalid");
     if ($("#card-num").tooltip != undefined) {
       $("#card-num").tooltip("dispose");
     }
+  } else if (($('input[name="paymentMethod"]:checked').val() == "mastercard") && (!($("#card-num").val()).match(mastercardRegEx))) {
+    $("#card-num").removeClass("is-valid");
+    $("#card-num").addClass("is-invalid");
+    let tooltip = new bootstrap.Tooltip("#card-num", {
+      title: "Invalid MasterCard Card Number"
+    });
+    validity = false;
   } else if (($('input[name="paymentMethod"]:checked').val() == "AEX") && ($("#card-num").val()).match(amexpRegEx)) {
     $("#card-num").addClass("is-valid");
     $("#card-num").removeClass("is-invalid");
     if ($("#card-num").tooltip != undefined) {
       $("#card-num").tooltip("dispose");
     }
+  }
+  else if (($('input[name="paymentMethod"]:checked').val() == "AEX") && (!($("#card-num").val()).match(amexpRegEx))) {
+    $("#card-num").removeClass("is-valid");
+    $("#card-num").addClass("is-invalid");
+    let tooltip = new bootstrap.Tooltip("#card-num", {
+      title: "Invalid AMEX Card Number"
+    });
+    validity = false;
   } else {
     $("#card-num").removeClass("is-valid");
     $("#card-num").addClass("is-invalid");
@@ -731,7 +808,11 @@ $("#continue-button-1").click(function (event) {
     validity = false;
   }
   if (validity == true) {
-    $("#billing-details").trigger('click');
+    document.getElementById("payment-details").disabled = false;
+    document.getElementById("billing-details").disabled = false;
+    document.getElementById("shipping-details").disabled = true;
+    document.getElementById("confirm-order").disabled = true;
+    $("#billing-details").click();
     $("#continue-button-1").hide();
     $("#continue-button-2").show();
 
@@ -817,6 +898,7 @@ $("#continue-button-2").click(function (event) {
   }
 
   let phone_regex = /^[2-9]{1}[0-9]{2}[-\s]?[2-9]{1}[0-9]{2}[-\s]?[0-9]{4}[\s]?[\s]?$/;
+  let us_phone_regex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
   let input = $("#phone").val();
 
   if (input == "") {
@@ -867,6 +949,13 @@ $("#continue-button-2").click(function (event) {
       title: "Invalid Phone Number: Please use the following format (xxx xxx xxxx / xxxxxxxxxx /xxx-xxx-xxxx)"
     });
     validity = false;
+  }
+  else if (($(`#province`).val == "US") && input.match(us_phone_regex)) {
+    $("#phone").removeClass("is-invalid");
+    $("#phone").addClass("is-valid");
+    if ($("#phone").tooltip != undefined) {
+      $("phone").tooltip("dispose");
+    }
   }
   else {
     $("#phone").addClass("is-invalid");
@@ -923,28 +1012,28 @@ $("#continue-button-2").click(function (event) {
     validity = false;
   }
   //country
-  if ($("#country").val() == "") {
-    $("#country").addClass("is-invalid");
-    $("#country").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip('#country', {
+  if ($("#province").val() == "") {
+    $("#province").addClass("is-invalid");
+    $("#province").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip('#province', {
       title: "Country Name cannot be blank"
     });
     validity = false;
-  } else if (($("#country").val()).match(name)) {
-    $("#country").removeClass("is-invalid");
-    $("#country").addClass("is-valid");
-    if ($("#country").tooltip != undefined) {
-      $("country").tooltip("dispose");
+  } else if (($("#province").val()).match(name)) {
+    $("#province").removeClass("is-invalid");
+    $("#province").addClass("is-valid");
+    if ($("#province").tooltip != undefined) {
+      $("#province").tooltip("dispose");
     }
   } else {
-    $("#country").addClass("is-invalid");
-    $("#country").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip('#country', {
+    $("#province").addClass("is-invalid");
+    $("#province").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip('#province', {
       title: "Invalid Country Name"
     });
     validity = false;
   }
-//city
+  //city
   if ($("#city").val() == "") {
     $("#city").addClass("is-invalid");
     $("#city").removeClass("is-valid");
@@ -991,6 +1080,7 @@ $("#continue-button-2").click(function (event) {
 
   //zip
   let zip = $("#zip").val();
+  let us_zip = /^\d{5}(?:[-\s]\d{4})?$/;
   let validation = /^[ABCEGHJ-NPRSTVXY][0-9]{1}[ABCEGHJ-NPRSTV-Z][\s]?[0-9]{1}[ABCEGHJ-NPRSTV-Z][0-9]{1}$/i;
   let invalid = /[DFIOQUWZ]/i;//these letters are not allowed in first letter
   let invalid1 = /[DFIOQU]/i;//these letters are not allowed in second and third letter
@@ -1007,6 +1097,12 @@ $("#continue-button-2").click(function (event) {
     if ($("#zip").tooltip != undefined) {
       $("#zip").tooltip("dispose");
     }
+  } else if (($(`#province`).val == "US") && zip.match(us_zip)) {
+    $("#zip").removeClass("is-invalid");
+    $("#zip").addClass("is-valid");
+    if ($("#zip").tooltip != undefined) {
+      $("#zip").tooltip("dispose");
+    }
   } else if (zip[0].match(invalid) || zip[2].match(invalid1) || zip[4].match(invalid1)) {
     $("#zip").addClass("is-invalid");
     $("#zip").removeClass("is-valid");
@@ -1018,11 +1114,13 @@ $("#continue-button-2").click(function (event) {
     $("#zip").addClass("is-invalid");
     $("#zip").removeClass("is-valid");
     let tooltip = new bootstrap.Tooltip('#zip', {
-      title: "Invalid Postal Code: Doesn't meet the correct format (ANANAN / ANA NAN)"
+      title: "Invalid Postal Code: Doesn't meet the correct format"
     });
     validity = false;
   }
   if (validity == true) {
+    document.getElementById("shipping-details").disabled = false;
+    $("#shipping-details").click();
     $("#myModal").find("#continue-button-2").hide();
     $("#myModal").find("#continue-button-3").show();
   }
@@ -1038,7 +1136,7 @@ $('#shipping_billing_same').change(function () {
     let lname = $(`#lastName`).val();
     let ad1 = $(`#address`).val();
     let ad2 = $(`#address2`).val();
-    let country = $(`#country`).val();
+    let country = $(`#province`).val();
     let city = $(`#city`).val();
     let zipShip = $(`#zip`).val();
     let state = $(`#state`).val();
@@ -1046,7 +1144,7 @@ $('#shipping_billing_same').change(function () {
     document.getElementById("lastName_ship").value = lname;
     document.getElementById("address_ship").value = ad1;
     document.getElementById("address2_ship").value = ad2;
-    document.getElementById("country_ship").value = country;
+    document.getElementById("province_ship").value = country;
     document.getElementById("city_ship").value = city;
     document.getElementById("state_ship").value = state;
     document.getElementById("zip_ship").value = zipShip;
@@ -1146,23 +1244,23 @@ $("#continue-button-3").click(function (event) {
     validity = false;
   }
   //country
-  if ($("#country_ship").val() == "") {
-    $("#country_ship").addClass("is-invalid");
-    $("#country_ship").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip('#country_ship', {
+  if ($("#province_ship").val() == "") {
+    $("#province_ship").addClass("is-invalid");
+    $("#province_ship").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip('#province_ship', {
       title: "Country Name cannot be blank"
     });
     validity = false;
-  } else if (($("#country_ship").val()).match(name)) {
-    $("#country_ship").removeClass("is-invalid");
-    $("#country_ship").addClass("is-valid");
-    if ($("#country_ship").tooltip != undefined) {
-      $("#country_ship").tooltip("dispose");
+  } else if (($("#province_ship").val()).match(name)) {
+    $("#province_ship").removeClass("is-invalid");
+    $("#province_ship").addClass("is-valid");
+    if ($("#province_ship").tooltip != undefined) {
+      $("#province_ship").tooltip("dispose");
     }
   } else {
-    $("#country_ship").addClass("is-invalid");
-    $("#country_ship").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip('#country_ship', {
+    $("#province_ship").addClass("is-invalid");
+    $("#province_ship").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip('#province_ship', {
       title: "Invalid Country Name"
     });
     validity = false;
@@ -1215,6 +1313,7 @@ $("#continue-button-3").click(function (event) {
 
   //zip
   let zip = $("#zip_ship").val();
+  let us_zip = /^\d{5}(?:[-\s]\d{4})?$/;
   let validation = /^[ABCEGHJ-NPRSTVXY][0-9]{1}[ABCEGHJ-NPRSTV-Z][\s]?[0-9]{1}[ABCEGHJ-NPRSTV-Z][0-9]{1}$/i;
   let invalid = /[DFIOQUWZ]/i;//these letters are not allowed in first letter
   let invalid1 = /[DFIOQU]/i;//these letters are not allowed in second and third letter
@@ -1231,6 +1330,13 @@ $("#continue-button-3").click(function (event) {
     if ($("#zip_ship").tooltip != undefined) {
       $("zip_ship").tooltip("dispose");
     }
+  }
+  else if (($(`#province_ship`).val == "US") && zip.match(us_zip)) {
+    $("#zip_ship").removeClass("is-invalid");
+    $("#zip_ship").addClass("is-valid");
+    if ($("#zip_ship").tooltip != undefined) {
+      $("zip_ship").tooltip("dispose");
+    }
   } else if (zip[0].match(invalid) || zip[2].match(invalid1) || zip[4].match(invalid1)) {
     $("#zip_ship").addClass("is-invalid");
     $("#zip_ship").removeClass("is-valid");
@@ -1242,12 +1348,16 @@ $("#continue-button-3").click(function (event) {
     $("#zip_ship").addClass("is-invalid");
     $("#zip_ship").removeClass("is-valid");
     let tooltip = new bootstrap.Tooltip('#zip_ship', {
-      title: "Invalid Postal Code: Doesn't meet the correct format (ANANAN / ANA NAN)"
+      title: "Invalid Postal Code: Doesn't meet the correct format"
     });
     validity = false;
   }
 
+
   if (validity == true) {
+    tax_calculator();
+    document.getElementById("confirm-order").disabled = false;
+    $("#confirm-order").click();
     $("#myModal").find("#continue-button-3").hide();
     $("#myModal").find("#confirm-button").show();
   }
@@ -1271,20 +1381,15 @@ function autocomplete_form() {
     then(response => response.json()).
     then((json) => {
       data = json;
-      //console.log(data.streets.street);
-      //console.log(typeof (data.streets.street))
       if (typeof (data.streets.street) == "object") {
         for (let i = 0; i < Object.keys(data.streets.street).length; i++) {
           address_array.push(data.streets.street[i]);
         }
         for (let i = 0; i < 3; i++) {
-          //console.log(address_array[i]);
           html1 += `<option id = "option${i}">${address_array[i]}</option>`
         }
 
-        //console.log(address_array);
       } if (typeof (data.streets.street) == "string") {
-        //console.log(data.streets.street);
         html1 = `<option id = "option1">${data.streets.street}</option>`
       }
 
@@ -1295,14 +1400,14 @@ function autocomplete_form() {
       let selectedText = $("#address").val();
 
       let division = selectedText.split(", ");
-      console.log(division);
+
 
       if (division[3] != undefined) {
         document.getElementById("address").value = division[0];
         document.getElementById("city").value = division[1];
         document.getElementById("state").value = division[2];
         document.getElementById("zip").value = division[3];
-        document.getElementById("country").value = "Canada";
+        document.getElementById("province").value = "CA";
       }
 
 
@@ -1329,20 +1434,19 @@ function autocomplete_form_ship() {
     then(response => response.json()).
     then((json) => {
       data = json;
-      //console.log(data.streets.street);
-      //console.log(typeof (data.streets.street))
+
       if (typeof (data.streets.street) == "object") {
         for (let i = 0; i < Object.keys(data.streets.street).length; i++) {
           address_array.push(data.streets.street[i]);
         }
         for (let i = 0; i < 3; i++) {
-          //console.log(address_array[i]);
+
           html1 += `<option id = "option${i}">${address_array[i]}</option>`
         }
 
-        //console.log(address_array);
+
       } if (typeof (data.streets.street) == "string") {
-        //console.log(data.streets.street);
+
         html1 = `<option id = "option1">${data.streets.street}</option>`
       }
 
@@ -1353,14 +1457,14 @@ function autocomplete_form_ship() {
       let selectedText = $("#address_ship").val();
 
       let division = selectedText.split(", ");
-      console.log(division);
+
 
       if (division[3] != undefined) {
         document.getElementById("address_ship").value = division[0];
         document.getElementById("city_ship").value = division[1];
         document.getElementById("state_ship").value = division[2];
         document.getElementById("zip_ship").value = division[3];
-        document.getElementById("country_ship").value = "Canada";
+        document.getElementById("province_ship").value = "CA";
       }
 
 
@@ -1403,7 +1507,7 @@ function final_json() {
       "address_2": $(`#address2`).val(),
       "city": $(`#city`).val(),
       "province": $(`#state`).val(),
-      "country": $(`#country`).val(),
+      "country": $(`#province`).val(),
       "postal": $(`#zip`).val(),
       "phone": $(`#phone`).val(),
       "email": $(`#email`).val()
@@ -1415,13 +1519,13 @@ function final_json() {
       "address_2": $(`#address2_ship`).val(),
       "city": $(`#city_ship`).val(),
       "province": $(`#state_ship`).val(),
-      "country": $(`#country_ship`).val(),
+      "country": $(`#province_ship`).val(),
       "postal": $(`#zip_ship`).val()
     }
 
 
   }
-  console.log(JSON.stringify(final_json_send.items));
+
   let formdata = new FormData();
   formdata.append('submission', JSON.stringify(final_json_send));
   let response = fetch('https://deepblue.camosun.bc.ca/~c0180354/ics128/final/', {
@@ -1430,9 +1534,9 @@ function final_json() {
   }).then(response => response.json()).
     then((json) => {
       data = json;
-      console.log(data);
-      console.log(data.status);
+
       if (data.status == "NOT SUBMITTED") {
+       
         post_validation(data);
       } else {
         $('#confirmation').modal('show');
@@ -1457,113 +1561,172 @@ function post_validation(data) {
       title: `${data.error.card_number}`
     });
   }
-  if(data.error.expiry_year != undefined){
+  if (data.error.expiry_year != undefined) {
     $("#yy").addClass("is-invalid");
     $("#yy").removeClass("is-valid");
     let tooltip = new bootstrap.Tooltip("#yy", {
       title: `${data.error.expiry_year}`
     });
   }
-  if(data.error.expiry_month != undefined){
+  if (data.error.expiry_month != undefined) {
     $("#mm").addClass("is-invalid");
     $("#mm").removeClass("is-valid");
     let tooltip = new bootstrap.Tooltip("#mm", {
       title: `${data.error.expiry_month}`
     });
   }
-  if(data.error.security_code != undefined){
+  if (data.error.security_code != undefined) {
     $("#cvv").addClass("is-invalid");
     $("#cvv").removeClass("is-valid");
     let tooltip = new bootstrap.Tooltip("#cvv", {
       title: `${data.error.security_code}`
     });
   }
-  if(data.error.billing.first_name != undefined){
-    $("#firstName").addClass("is-invalid");
-    $("#firstName").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#firstName", {
-      title: `${data.error.billing.first_name}`
-    });
+
+  if (data.error.billing != undefined) {
+    if (data.error.billing.first_name != undefined) {
+      $("#firstName").addClass("is-invalid");
+      $("#firstName").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#firstName", {
+        title: `${data.error.billing.first_name}`
+      });
+    }
+    if (data.error.billing.last_name != undefined) {
+      $("#lastName").addClass("is-invalid");
+      $("#lastName").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#lastName", {
+        title: `${data.error.billing.last_name}`
+      });
+    }
+    if (data.error.billing.address_1 != undefined) {
+      $("#address").addClass("is-invalid");
+      $("#address").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#address", {
+        title: `${data.error.billing.address_1}`
+      });
+    }
+    if (data.error.billing.city != undefined) {
+      $("#city").addClass("is-invalid");
+      $("#city").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#city", {
+        title: `${data.error.billing.city}`
+      });
+    }
+    if (data.error.billing.email != undefined) {
+      $("#email").addClass("is-invalid");
+      $("#email").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#email", {
+        title: `${data.error.billing.email}`
+      });
+    }
+    if (data.error.billing.phone != undefined) {
+      $("#phone").addClass("is-invalid");
+      $("#phone").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#phone", {
+        title: `${data.error.billing.phone}`
+      });
+    }
+    if (data.error.billing.province != undefined) {
+      $("#state").addClass("is-invalid");
+      $("#state").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#state", {
+        title: `${data.error.billing.province}`
+      });
+    }
   }
-  if(data.error.billing.last_name != undefined){
-    $("#lastName").addClass("is-invalid");
-    $("#lastName").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#lastName", {
-      title: `${data.error.billing.last_name}`
-    });
-  }
-  if(data.error.billing.address_1 != undefined){
-    $("#address").addClass("is-invalid");
-    $("#address").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#address", {
-      title: `${data.error.billing.address_1}`
-    });
-  }
-  if(data.error.billing.city != undefined){
-    $("#city").addClass("is-invalid");
-    $("#city").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#city", {
-      title: `${data.error.billing.city}`
-    });
-  }
-  if(data.error.billing.email != undefined){
-    $("#email").addClass("is-invalid");
-    $("#email").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#email", {
-      title: `${data.error.billing.email}`
-    });
-  }
-  if(data.error.billing.phone != undefined){
-    $("#phone").addClass("is-invalid");
-    $("#phone").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#phone", {
-      title: `${data.error.billing.phone}`
-    });
-  }
-  if(data.error.billing.province != undefined){
-    $("#state").addClass("is-invalid");
-    $("#state").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#state", {
-      title: `${data.error.billing.province}`
-    });
-  }
-  if(data.error.shipping.first_name != undefined){
-    $("#firstName_ship").addClass("is-invalid");
-    $("#firstName_ship").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#firstName_ship", {
-      title: `${data.error.shipping.first_name}`
-    });
-  }
-  if(data.error.shipping.last_name != undefined){
-    $("#lastName_ship").addClass("is-invalid");
-    $("#lastName_ship").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#lastName_ship", {
-      title: `${data.error.shipping.last_name}`
-    });
-  }
-  if(data.error.shipping.address_1 != undefined){
-    $("#address_ship").addClass("is-invalid");
-    $("#address_ship").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#address_ship", {
-      title: `${data.error.shipping.address_1}`
-    });
-  }
-  if(data.error.shipping.city != undefined){
-    $("#city_ship").addClass("is-invalid");
-    $("#city_ship").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#city_ship", {
-      title: `${data.error.shipping.city}`
-    });
-  }
-  if(data.error.shipping.province != undefined){
-    $("#state_ship").addClass("is-invalid");
-    $("#state_ship").removeClass("is-valid");
-    let tooltip = new bootstrap.Tooltip("#state_ship", {
-      title: `${data.error.shipping.province}`
-    });
+  if (data.error.shipping != undefined) {
+    if (data.error.shipping.first_name != undefined) {
+      $("#firstName_ship").addClass("is-invalid");
+      $("#firstName_ship").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#firstName_ship", {
+        title: `${data.error.shipping.first_name}`
+      });
+    }
+    if (data.error.shipping.last_name != undefined) {
+      $("#lastName_ship").addClass("is-invalid");
+      $("#lastName_ship").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#lastName_ship", {
+        title: `${data.error.shipping.last_name}`
+      });
+    }
+    if (data.error.shipping.address_1 != undefined) {
+      $("#address_ship").addClass("is-invalid");
+      $("#address_ship").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#address_ship", {
+        title: `${data.error.shipping.address_1}`
+      });
+    }
+    if (data.error.shipping.city != undefined) {
+      $("#city_ship").addClass("is-invalid");
+      $("#city_ship").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#city_ship", {
+        title: `${data.error.shipping.city}`
+      });
+    }
+    if (data.error.shipping.province != undefined) {
+      $("#state_ship").addClass("is-invalid");
+      $("#state_ship").removeClass("is-valid");
+      let tooltip = new bootstrap.Tooltip("#state_ship", {
+        title: `${data.error.shipping.province}`
+      });
+    }
   }
   $(`#errorShow`).modal('show');
-
+  $("#payment-details").click();
+  $("#myModal").find("#continue-button-1").show();
+  $("#myModal").find("#confirm-button").hide();
 
 }
 
+$("#payment-details").click(function () {
+  $("#myModal").find("#continue-button-1").show();
+  $("#myModal").find("#continue-button-2").hide();
+  $("#myModal").find("#continue-button-3").hide();
+  $("#myModal").find("#confirm-button").hide();
+});
+
+$("#billing-details").click(function () {
+  $("#myModal").find("#continue-button-1").hide();
+  $("#myModal").find("#continue-button-2").show();
+  $("#myModal").find("#continue-button-3").hide();
+  $("#myModal").find("#confirm-button").hide();
+});
+
+$("#shipping-details").click(function () {
+  $("#myModal").find("#continue-button-1").hide();
+  $("#myModal").find("#continue-button-2").hide();
+  $("#myModal").find("#continue-button-3").show();
+  $("#myModal").find("#confirm-button").hide();
+});
+
+$("#confirm-order").click(function () {
+  $("#myModal").find("#continue-button-1").hide();
+  $("#myModal").find("#continue-button-2").hide();
+  $("#myModal").find("#continue-button-3").hide();
+  $("#myModal").find("#confirm-button").show();
+});
+
+document.getElementById("province").addEventListener("input", billing_states_change);
+document.getElementById("province").addEventListener("input", shipping_states_change);
+
+function billing_states_change() {
+  let value = $(`#province`).val();
+  let state = document.getElementById("state");
+  if (value == "US") {
+    state.setAttribute('list', "state_list_USA")
+  }
+  if (value == "CA") {
+    state.setAttribute('list', "state_list_CA")
+  }
+}
+
+function shipping_states_change() {
+  let value = $(`#province_ship`).val();
+  let state = document.getElementById("state_ship");
+  if (value == "US") {
+    state.setAttribute('list', "state_list_ship_USA");
+  }
+  if (value == "CA") {
+    state.setAttribute('list', "state_list_ship_CA");
+  }
+}

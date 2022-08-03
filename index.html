@@ -155,27 +155,27 @@
       <div class="modal-content">
         <form id="login-form">
           <div class="modal-header">
-           <h4>Checkout</h4>
+            <h4>Checkout</h4>
 
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <ul class="nav nav-pills nav-fill" id="myTab" role="tablist">
-              <li class="nav-item" role="presentation" id = "tab1">
-                <a class="nav-link active" id="payment-details" data-bs-toggle="tab" data-bs-target="#payment"
-                  type="button" role="tab" aria-controls="payment" aria-selected="true">Payment</a>
+              <li class="nav-item" role="presentation" id="tab1">
+                <button class="nav-link active" id="payment-details" data-bs-toggle="tab" data-bs-target="#payment"
+                  type="button" role="tab" aria-controls="payment" aria-selected="true">Payment</button>
               </li>
-              <li class="nav-item" role="presentation" id = "tab2">
-                <a class="nav-link" id="billing-details" data-bs-toggle="tab" data-bs-target="#billing"
-                  type="button" role="tab" aria-controls="billing" aria-selected="false">Billing</a>
+              <li class="nav-item" role="presentation" id="tab2">
+                <button class="nav-link" id="billing-details" data-bs-toggle="tab" data-bs-target="#billing"
+                  type="button" role="tab" aria-controls="billing" aria-selected="false" disabled>Billing</button>
               </li>
-              <li class="nav-item" role="presentation" id = "tab3">
-                <a class="nav-link" id="shipping-details" data-bs-toggle="tab" data-bs-target="#shipping"
-                  type="button" role="tab" aria-controls="shipping" aria-selected="false">Shipping</a>
+              <li class="nav-item" role="presentation" id="tab3">
+                <button class="nav-link" id="shipping-details" data-bs-toggle="tab" data-bs-target="#shipping"
+                  type="button" role="tab" aria-controls="shipping" aria-selected="false" disabled>Shipping</button>
               </li>
-              <li class="nav-item" role="presentation" id = "tab4">
-                <a class="nav-link" id="confirm-order" data-bs-toggle="tab" data-bs-target="#order" type="button"
-                  role="tab" aria-controls="order" aria-selected="false">Confirm Order</a>
+              <li class="nav-item" role="presentation" id="tab4">
+                <button class="nav-link" id="confirm-order" data-bs-toggle="tab" data-bs-target="#order" type="button"
+                  role="tab" aria-controls="order" aria-selected="false" disabled>Confirm Order</button>
               </li>
             </ul>
             <div class="tab-content" id="myTabContent">
@@ -213,8 +213,8 @@
                                 <h6>Expiration Date</h6>
                               </span></label>
                             <div class="input-group"> <input type="number" placeholder="MM" name="" class="form-control"
-                                id="mm" required> <input type="number" placeholder="YY (2 Digits)" name="" class="form-control"
-                                id="yy" required>
+                                id="mm" required> <input type="number" placeholder="YY (2 Digits)" name=""
+                                class="form-control" id="yy" required>
                             </div>
                           </div>
                         </div>
@@ -256,8 +256,9 @@
 
                   <div class="col-12">
                     <label for="address" class="form-label">Address</label>
-                    <input type="text" class="form-control" id="address" placeholder="1234 Main St" list = "street_suggest" oninput="autocomplete_form()" required>
-                    <datalist id = "street_suggest"></datalist>
+                    <input type="text" class="form-control" id="address" placeholder="1234 Main St"
+                      list="street_suggest" oninput="autocomplete_form()" required>
+                    <datalist id="street_suggest"></datalist>
                   </div>
 
                   <div class="col-12">
@@ -266,16 +267,25 @@
                     <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
                   </div>
 
-                  
+
                   <div class="col-md-5">
                     <label for="city" class="form-label">City</label>
                     <input type="text" class="form-control" id="city" placeholder="" required>
                   </div>
 
+                  <div class="col-md-5">
+                    <label for="country" class="form-label">Counrty</label>
+                    <input type="text" class="form-control" id="province" placeholder="" list="countries" required>
+                    <datalist id="countries">
+                      <option>CA</option>
+                      <option>US</option>
+                    </datalist>
+                  </div>
+
                   <div class="col-md-4">
                     <label for="state" class="form-label">State</label>
-                    <input type="text" class="form-control" id="state" placeholder="" list="state_list" required>
-                    <datalist id = "state_list">
+                    <input type="text" class="form-control" id="state" placeholder="" required>
+                    <datalist id="state_list_CA">
                       <option>NL</option>
                       <option>PE</option>
                       <option>NS</option>
@@ -290,12 +300,62 @@
                       <option>NT</option>
                       <option>NU</option>
                     </datalist>
+                    <datalist id="state_list_USA">
+                      <option value="AL">AL</option>
+                      <option value="AK">AK</option>
+                      <option value="AZ">AZ</option>
+                      <option value="AR">AR</option>
+                      <option value="CA">CA</option>
+                      <option value="CO">CO</option>
+                      <option value="CT">CT</option>
+                      <option value="DE">DE</option>
+                      <option value="DC">DC</option>
+                      <option value="FL">FL</option>
+                      <option value="GA">GA</option>
+                      <option value="HI">HI</option>
+                      <option value="ID">ID</option>
+                      <option value="IL">IL</option>
+                      <option value="IN">IN</option>
+                      <option value="IA">IA</option>
+                      <option value="KS">KS</option>
+                      <option value="KY">KY</option>
+                      <option value="LA">LA</option>
+                      <option value="ME">ME</option>
+                      <option value="MD">MD</option>
+                      <option value="MA">MA</option>
+                      <option value="MI">MI</option>
+                      <option value="MN">MN</option>
+                      <option value="MS">MS</option>
+                      <option value="MO">MO</option>
+                      <option value="MT">MT</option>
+                      <option value="NE">NE</option>
+                      <option value="NV">NV</option>
+                      <option value="NH">NH</option>
+                      <option value="NJ">NJ</option>
+                      <option value="NM">NM</option>
+                      <option value="NY">NY</option>
+                      <option value="NC">NC</option>
+                      <option value="ND">ND</option>
+                      <option value="OH">OH</option>
+                      <option value="OK">OK</option>
+                      <option value="OR">OR</option>
+                      <option value="PA">PA</option>
+                      <option value="RI">RI</option>
+                      <option value="SC">SC</option>
+                      <option value="SD">SD</option>
+                      <option value="TN">TN</option>
+                      <option value="TX">TX</option>
+                      <option value="UT">UT</option>
+                      <option value="VT">VT</option>
+                      <option value="VA">VA</option>
+                      <option value="WA">WA</option>
+                      <option value="WV">WV</option>
+                      <option value="WI">WI</option>
+                      <option value="WY">WY</option>
+
+                    </datalist>
                   </div>
 
-                  <div class="col-md-5">
-                    <label for="country" class="form-label">Counrty</label>
-                    <input type="text" class="form-control" id="country" placeholder="" required>
-                  </div>
 
                   <div class="col-md-3">
                     <label for="zip" class="form-label">Zip</label>
@@ -311,7 +371,7 @@
                   <div class="form-check">
                     <input class="form-check-input" id="shipping_billing_same" name="check" type="checkbox" value="">
                     <label class="form-check-label" for="shipping_billing_same">
-                     Shipping Information are same as my billing details
+                      Shipping Information are same as my billing details
                     </label>
                   </div>
                   </p>
@@ -328,8 +388,9 @@
 
                     <div class="col-12">
                       <label for="address_ship" class="form-label">Address</label>
-                      <input type="text" class="form-control" id="address_ship" placeholder="1234 Main St" list = "street_suggest_ship" oninput="autocomplete_form_ship()" required>
-                      <datalist id = "street_suggest_ship"></datalist>
+                      <input type="text" class="form-control" id="address_ship" placeholder="1234 Main St"
+                        list="street_suggest_ship" oninput="autocomplete_form_ship()" required>
+                      <datalist id="street_suggest_ship"></datalist>
                     </div>
 
                     <div class="col-12">
@@ -343,10 +404,20 @@
                       <input type="text" class="form-control" id="city_ship" placeholder="" required>
                     </div>
 
+                    <div class="col-md-5">
+                      <label for="country_ship" class="form-label">Country</label>
+                      <input type="text" class="form-control" id="province_ship" placeholder="" list="countries_ship"
+                        required>
+                      <datalist id="countries_ship">
+                        <option>CA</option>
+                        <option>US</option>
+                      </datalist>
+                    </div>
+
                     <div class="col-md-4">
                       <label for="state_ship" class="form-label">State</label>
-                      <input type="text" class="form-control" id="state_ship" list="state_list_ship" placeholder="" required>
-                      <datalist id = "state_list_ship">
+                      <input type="text" class="form-control" id="state_ship" placeholder="" required>
+                      <datalist id="state_list_ship_CA">
                         <option>NL</option>
                         <option>PE</option>
                         <option>NS</option>
@@ -361,13 +432,61 @@
                         <option>NT</option>
                         <option>NU</option>
                       </datalist>
+                      <datalist id="state_list_ship_USA">
+                        <option value="AL">AL</option>
+                        <option value="AK">AK</option>
+                        <option value="AZ">AZ</option>
+                        <option value="AR">AR</option>
+                        <option value="CA">CA</option>
+                        <option value="CO">CO</option>
+                        <option value="CT">CT</option>
+                        <option value="DE">DE</option>
+                        <option value="DC">DC</option>
+                        <option value="FL">FL</option>
+                        <option value="GA">GA</option>
+                        <option value="HI">HI</option>
+                        <option value="ID">ID</option>
+                        <option value="IL">IL</option>
+                        <option value="IN">IN</option>
+                        <option value="IA">IA</option>
+                        <option value="KS">KS</option>
+                        <option value="KY">KY</option>
+                        <option value="LA">LA</option>
+                        <option value="ME">ME</option>
+                        <option value="MD">MD</option>
+                        <option value="MA">MA</option>
+                        <option value="MI">MI</option>
+                        <option value="MN">MN</option>
+                        <option value="MS">MS</option>
+                        <option value="MO">MO</option>
+                        <option value="MT">MT</option>
+                        <option value="NE">NE</option>
+                        <option value="NV">NV</option>
+                        <option value="NH">NH</option>
+                        <option value="NJ">NJ</option>
+                        <option value="NM">NM</option>
+                        <option value="NY">NY</option>
+                        <option value="NC">NC</option>
+                        <option value="ND">ND</option>
+                        <option value="OH">OH</option>
+                        <option value="OK">OK</option>
+                        <option value="OR">OR</option>
+                        <option value="PA">PA</option>
+                        <option value="RI">RI</option>
+                        <option value="SC">SC</option>
+                        <option value="SD">SD</option>
+                        <option value="TN">TN</option>
+                        <option value="TX">TX</option>
+                        <option value="UT">UT</option>
+                        <option value="VT">VT</option>
+                        <option value="VA">VA</option>
+                        <option value="WA">WA</option>
+                        <option value="WV">WV</option>
+                        <option value="WI">WI</option>
+                        <option value="WY">WY</option>
+                      </datalist>
                     </div>
 
-                    <div class="col-md-5">
-                      <label for="country_ship" class="form-label">Country</label>
-                      <input type="text" class="form-control" id="country_ship" placeholder="" required>
-
-                    </div>
 
                     <div class="col-md-3">
                       <label for="zip_ship" class="form-label">Zip</label>
@@ -441,19 +560,20 @@
     </div>
   </div>
 
-  
-<div class="modal fade" id="errorShow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-body">
-        Failed to finalize your order. Please go back to checkout menu and correct the errors.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Understood</button>
+
+  <div class="modal fade" id="errorShow" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          Failed to finalize your order. Please go back to checkout menu and correct the errors.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">Understood</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 
 
