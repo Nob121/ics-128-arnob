@@ -1,3 +1,5 @@
+/*Created a class called cart, product object has all the products that will be added to the cart. It has 3 functions. One is to empty the whole cart. one is to remove one item and one is to add a product and update the quantity*/
+
 class Cart {
   constructor() {
     this.product = {};
@@ -9,6 +11,7 @@ class Cart {
   }
 
   cartAddandQuantity(item) {
+    //if the product doesn't exist in product object, we are gonna add the product and set the quantity to 1. If it already exists, we are gonna increment quantity by 1
     if (this.product[item.id] === undefined) {
       this.product[item.id] = item;
       this.product[item.id].quantity = 1;
@@ -53,13 +56,13 @@ window.onload = function () {
         let msnry = new Masonry(catalog_container); // this initializes the masonry container AFTER the product images are loaded
       });
     })
+    //if there is an error backup fetch works
     .catch((error) => {
       fetch("https://deepblue.camosun.bc.ca/~c0180354/ics128/final/fakestoreapi.json").
         then((response) => {
           if (response.status === 200) {
             return response.json();
           }
-          throw new Error("Something went wrong");
         }).then((json) => {
           data = json;
 
@@ -70,10 +73,7 @@ window.onload = function () {
           });
         })
     }).then(addCart).
-    then(cookies).
-    catch((error) => {
-      $("#products").html(`Sorry Something went wrong. Please try again`);
-    });
+    then(cookies)
 }
 
 //display the items
@@ -98,10 +98,11 @@ function productShow(element) {
 
 
 }
-
+//counting the total quantity
 function totalQty() {
   quantity = 0;
   for (let i = 0; i < data.length; i++) {
+    //if that product doesn't exist in cart, we are gonna skip that loop and go to the next one
     if (cart.product[i + 1] === undefined) {
       continue;
     }
@@ -112,7 +113,7 @@ function totalQty() {
 
 
 
-//add-to-cart
+//add-to-cart functionality
 function addToCart(id) {
   $("#checkout").show();
   $("#begin").hide();
@@ -125,6 +126,7 @@ function addToCart(id) {
   }
   displayAndRemove();
 }
+
 let quantity = 0;
 //showing in the cart
 let st_for_tax = 0;
@@ -144,6 +146,8 @@ function displayAndRemove() {
     total = (total + cart.product[item].quantity * cart.product[item].price).toFixed(2);
     subtotal = parseFloat(total) + parseFloat(subtotal);
     st_for_tax = subtotal;
+
+    //for the offcanvus and check out modal
     txt += `<div id = "div${cart.product[item].id}"><tr>
       <td>${cart.product[item].title}</td>
       <td>CA$${(cart.product[item].price).toFixed(2)}</td>
@@ -169,12 +173,16 @@ function displayAndRemove() {
 
   $("#order-total").html(`<b>Order Total: </b><span class = "subtotal"><b>CA$${parseFloat(order_total).toFixed(2)}</b></span>`);
 
-  $("#body").html(txt);
-  $("#body2").html(txt2);
+  $("#body").html(txt);//offcanvus
+  $("#body2").html(txt2);//modal
+
+  //other items from checkout
   $("#item").html(`<b>Subtotal: </b><span id = "subtotal" value = "${parseFloat(subtotal).toFixed(2)}">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal" value = "${parseFloat(subtotal).toFixed(2)}">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost" value = "${parseFloat(shipping_cost).toFixed(2)}">CA$${parseFloat(shipping_cost).toFixed(2)}</span>`);
   $("#tax").html(`<b>Tax: </b><span class = "subtotal" id = "st_tax" value = "${parseFloat(tax).toFixed(2)}">CA$${parseFloat(tax).toFixed(2)}</span>`);
+
+  //if cart.product is empty
   if (Object.keys(cart.product).length == 0) {
     $("#empty-cart").hide();
     $(`.table`).hide();
@@ -184,10 +192,11 @@ function displayAndRemove() {
     $("view-cart").val("View Cart");
     click = 0;
   }
-
+  //if you click the delete button in offcanvus
   $(".remove").click(function () {
-    let buttonID = this.id.slice(14, 16);
+    let buttonID = this.id.slice(14, 16);//button ids are set like remove-button-1,remove-button-2,remove-button-3 where 1,2,3 are product id, so slicing just returns 1,2,3....
     for (let item in cart.product) {
+      //if product id matches with button's sliced part
       if (cart.product[item].id == buttonID) {
 
         cart.removeItem(cart.product[item]);
@@ -195,6 +204,7 @@ function displayAndRemove() {
         changeCurrency();
       }
     }
+    //to show the total product quantity in view-cart button
     $("#view-cart").val(`View Cart (${totalQty()})`);
     if (totalQty() == 0) {
       $("#view-cart").val(`View Cart`);
@@ -212,13 +222,16 @@ function addCart() {
   $(".add-to-cart").click(function () {
     $(`#item`).show();
     $("#empty-cart").show();
+    //view cart value according to product quantity
     v_cart.value = `View Cart (${totalQty()})`;
+    //when you add a item in the cart a modal is gonna be for 800ms to give a notification that the product has been added
     $("#order-cart").modal('show');
     setTimeout(modalHide, 800);
     function modalHide() {
       $("#order-cart").modal('hide');
     }
     changeCurrency();
+    //to change the currency according to your select option every time you click on add-to-cart
     let option1 = document.getElementById("select");
     let value1 = select.options[option1.selectedIndex].value;
 
@@ -261,7 +274,7 @@ function addCart() {
       }
     }
   });
-
+  //empty-cart-button click
   $("#empty-cart").click(function () {
     click = 0;
     $(".table").hide();
@@ -278,15 +291,33 @@ function addCart() {
 let currency = {};
 function currency_convert() {
   fetch("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/cad.json").
-    then(response => response.json()).
+    then((response) => {
+      if (response.status === 200) {
+        return response.json();
+      }
+      throw new Error("Something went wrong");
+    }).
     then((json) => {
       currency = json;
       changeCurrency(currency);
-    });
-};
+    })
+    //backup for an error
+    .catch((error) => {
+      fetch("https://deepblue.camosun.bc.ca/~c0180354/ics128/final/currencies-cad.json").
+        then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          }
+        }).
+        then((json) => {
+          currency = json;
+          changeCurrency(currency);
+        })
+    })
+}
 
 
-
+//takes the value from select option and calls function accordingly
 function changeCurrency() {
   let option = document.getElementById("select");
   let value = select.options[option.selectedIndex].value;
@@ -303,6 +334,8 @@ function changeCurrency() {
 let usd_array = [];
 let bdt_array = [];
 let cad_array = [];
+
+//changes all the prices to cad and pushes in cad_array and set them in the html accordingly
 function cad_convert(element) {
   let changed_price = element.price;
   cad_array.push(changed_price);
@@ -349,8 +382,8 @@ function cad_convert(element) {
   let order_total = parseFloat(tax) + parseFloat(shipping_cost) + parseFloat(subtotal);
   $("#order-total").html(`<b>Order Total: </b><span class = "subtotal"><b>CA$${parseFloat(order_total).toFixed(2)}</b></span>`);
 
-  $("#body").html(txt);
-  $("#body2").html(txt2);
+  $("#body").html(txt);//offcanvus convert
+  $("#body2").html(txt2);//modal convert
   $("#item").html(`<b>Subtotal: </b><span id = "subtotal" value = "${parseFloat(subtotal).toFixed(2)}">CA$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal" ${parseFloat(subtotal).toFixed(2)}>CA$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost" value = "${parseFloat(shipping_cost).toFixed(2)}">CA$${parseFloat(shipping_cost).toFixed(2)}</span>`);
@@ -382,7 +415,7 @@ function cad_convert(element) {
 
 
 
-
+////changes all the prices to bdt and pushes in bdt_array and set them in the html accordingly
 function bdt_convert(element) {
   let changed_price = currency.cad.bdt * element.price;
   bdt_array.push(changed_price);
@@ -431,8 +464,8 @@ function bdt_convert(element) {
   let order_total = parseFloat(tax_bdt) + parseFloat(shipping_cost) + parseFloat(subtotal);
   $("#order-total").html(`<b>Order Total: </b><span class = "subtotal"><b>&#2547;${parseFloat(order_total).toFixed(2)}</b></span>`);
 
-  $("#body").html(txt);
-  $("#body2").html(txt2);
+  $("#body").html(txt);//offcanvus
+  $("#body2").html(txt2);//modal
   $("#item").html(`<b>Subtotal: </b><span id = "subtotal" value = "${parseFloat(subtotal).toFixed(2)}">&#2547;${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">&#2547;${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost" value = "${parseFloat(shipping_cost).toFixed(2)}">&#2547;${parseFloat(shipping_cost).toFixed(2)}</span>`);
@@ -449,8 +482,6 @@ function bdt_convert(element) {
     let buttonID = this.id.slice(14, 16);
     for (let item in cart.product) {
       if (cart.product[item].id == buttonID) {
-        //$("#view-cart").val(`View Cart (${totalQty()})`);
-
         cart.removeItem(cart.product[item]);
         displayAndRemove();
         changeCurrency();
@@ -463,7 +494,7 @@ function bdt_convert(element) {
   })
 }
 
-
+//changes all the prices to usd and pushes in usd_array and set them in the html accordingly
 function usd_convert(element) {
   let changed_price = currency.cad.usd * element.price;
   usd_array.push(changed_price);
@@ -510,8 +541,8 @@ function usd_convert(element) {
   let order_total = parseFloat(tax_usd) + parseFloat(shipping_cost) + parseFloat(subtotal);
   $("#order-total").html(`<b>Order Total: </b><span class = "subtotal">$${parseFloat(order_total).toFixed(2)}</span>`);
 
-  $("#body").html(txt);
-  $("#body2").html(txt2);
+  $("#body").html(txt);//offcanvus
+  $("#body2").html(txt2);//modal
   $("#item").html(`<b>Subtotal: </b><span id = "subtotal" value = "${parseFloat(subtotal).toFixed(2)}">$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#subtotal-final").html(`<b>Subtotal: </b><span class = "subtotal">$${parseFloat(subtotal).toFixed(2)}</span>`);
   $("#shipping-cost").html(`<b>Shipping Cost: </b><span class = "subtotal" id = "shipping_cost" value = "${parseFloat(shipping_cost).toFixed(2)}">$${parseFloat(shipping_cost).toFixed(2)}</span>`);
@@ -545,7 +576,8 @@ function usd_convert(element) {
 
 }
 let tax = 0;
-
+//calculating the tax according to the shipping state
+//st_for_tax is a global variable which has the subtotal value
 function tax_calculator() {
   let option1 = document.getElementById("select");
   let value1 = select.options[option1.selectedIndex].value;
@@ -590,7 +622,7 @@ function tax_calculator() {
   displayAndRemove();
 
 }
-
+//every time shipping state's value changes, tax_calculator function gets called
 document.getElementById("state_ship").addEventListener("change", tax_calculator);
 
 
@@ -623,38 +655,24 @@ function cookies() {
 }
 
 
-//checkout
+//checkout modal show
 
 $("#checkout").click(function () {
   $('#myModal').modal('show');
 });
 
 
-
-
-
-
-/*const searchInput = document.querySelector('.search-input');
-const suggestions = document.querySelector('.suggestions');
- 
-searchInput.addEventListener('change', displayMatches);
-searchInput.addEventListener('keyup', displayMatches);
-*/
-
-
-
-
 $("#continue-button-1").click(function (event) {
   //prevent from submitting
   event.preventDefault();
-  //keeo track of validity
+  //keep track of validity
   let visaRegEx = /^4[0-9]{12}(?:[0-9]{3})?$/;
   var mastercardRegEx = /^5[1-5][0-9]{14}$|^2(?:2(?:2[1-9]|[3-9][0-9])|[3-6][0-9][0-9]|7(?:[01][0-9]|20))[0-9]{12}$/;
   var amexpRegEx = /^3[47][0-9]{13}$/;
   let value = $("#card-num").val();
   let validity = true;
 
-  //card number
+  //card number: checks the card type and number both
   if ($("#card-num").val() == "") {
     $("#card-num").addClass("is-invalid");
     $("#card-num").removeClass("is-valid");
@@ -746,16 +764,23 @@ $("#continue-button-1").click(function (event) {
       title: "Year cannot be blank"
     });
     validity = false;
-  } else if (($("#yy").val()).match(mm_regex)) {
+  } else if (($("#yy").val()).match(mm_regex) && ((parseInt($("#yy").val()) < 100))) {
     $("#yy").addClass("is-valid");
     $("#yy").removeClass("is-invalid");
     if ($("#yy").tooltip != undefined) {
       $("#yy").tooltip("dispose");
     }
+  } else {
+    $("#yy").addClass("is-invalid");
+    $("#yy").removeClass("is-valid");
+    let tooltip = new bootstrap.Tooltip("#yy", {
+      title: "Invalid year"
+    });
+    validity = false;
   }
-  let year = "20" + $("#yy").val();
-  let created_date = new Date(parseInt(year), ($("#mm").val() - 1));
-  let current_date = new Date();
+  let year = "20" + $("#yy").val();//to make the year 2045,2065....
+  let created_date = new Date(parseInt(year), ($("#mm").val() - 1));//date from user input
+  let current_date = new Date();//current date
 
   //Date Validation
 
@@ -775,7 +800,7 @@ $("#continue-button-1").click(function (event) {
   }
 
   //CVV
-
+  //amex has 4 digits in cvv but visa and mastercard has 3 digits
   let cvv_vi_mc = /^[0-9]{3}$/;
   let cvv_amex = /^[0-9]{4}$/;
   if ($("#cvv").val() == "") {
@@ -809,22 +834,18 @@ $("#continue-button-1").click(function (event) {
   }
   if (validity == true) {
     document.getElementById("payment-details").disabled = false;
-    document.getElementById("billing-details").disabled = false;
+    document.getElementById("billing-details").disabled = false;//enabling billing details button
     document.getElementById("shipping-details").disabled = true;
     document.getElementById("confirm-order").disabled = true;
-    $("#billing-details").click();
+    $("#billing-details").click();//next tab
     $("#continue-button-1").hide();
     $("#continue-button-2").show();
-
   }
-
-}
-
-);
+});
 
 
 $("#continue-button-2").click(function (event) {
-  /**/
+
   event.preventDefault();
   let validity = true;
   let name = /^[a-z ,.'-]+$/i;
@@ -1119,8 +1140,8 @@ $("#continue-button-2").click(function (event) {
     validity = false;
   }
   if (validity == true) {
-    document.getElementById("shipping-details").disabled = false;
-    $("#shipping-details").click();
+    document.getElementById("shipping-details").disabled = false;//enabling shipping details button
+    $("#shipping-details").click();//next tab
     $("#myModal").find("#continue-button-2").hide();
     $("#myModal").find("#continue-button-3").show();
   }
@@ -1129,9 +1150,20 @@ $("#continue-button-2").click(function (event) {
 
 $('#shipping_billing_same').change(function () {
   if (!$(this).is(':checked')) {
-    $("#myModal").find(`#billing-shipping`).show();
+    //if the checkbox is not checked 
+    $("#myModal").find(`#billing-shipping`).show();//showing the form
+    document.getElementById("firstName_ship").value = "";
+    document.getElementById("lastName_ship").value = "";
+    document.getElementById("address_ship").value = "";
+    document.getElementById("address2_ship").value = "";
+    document.getElementById("province_ship").value = "";
+    document.getElementById("city_ship").value = "";
+    document.getElementById("state_ship").value = "";
+    document.getElementById("zip_ship").value = "";
   } else {
-    $("#myModal").find(`#billing-shipping`).hide();
+    //if the checkbox is checked
+    $("#myModal").find(`#billing-shipping`).hide();//hiding the form
+    //setting all the values from billing form to shipping
     let fname = $(`#firstName`).val();
     let lname = $(`#lastName`).val();
     let ad1 = $(`#address`).val();
@@ -1356,25 +1388,22 @@ $("#continue-button-3").click(function (event) {
 
   if (validity == true) {
     tax_calculator();
-    document.getElementById("confirm-order").disabled = false;
-    $("#confirm-order").click();
+    document.getElementById("confirm-order").disabled = false;//enabling confirm order tab button
+    $("#confirm-order").click();//next tab
     $("#myModal").find("#continue-button-3").hide();
     $("#myModal").find("#confirm-button").show();
   }
 
 })
 
-
-/*$("#myModal").find("#continue-button-1").hide();
-$("#myModal").find("#continue-button-2").show();*/
-
+//geolocation
 function autocomplete_form() {
   let num;
   let text;
   let data = {};
   let html1 = "";
   let address_array = [];
-  let splited = $("#address").val().split(" ");
+  let splited = $("#address").val().split(" ");//spliting the number from the texts
   num = splited[0];
   text = splited[1];
   fetch(`https://geocoder.ca/?autocomplete=1&geoit=xml&auth=test&json=1&locate=${num}%20${text}`).
@@ -1382,45 +1411,43 @@ function autocomplete_form() {
     then((json) => {
       data = json;
       if (typeof (data.streets.street) == "object") {
+        //if the return type is object(more than one address), make an array and push the addresses
         for (let i = 0; i < Object.keys(data.streets.street).length; i++) {
           address_array.push(data.streets.street[i]);
         }
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 3; i++) {//only showing the 1st 4 options
           html1 += `<option id = "option${i}">${address_array[i]}</option>`
         }
-
-      } if (typeof (data.streets.street) == "string") {
+      }
+      //if the return type is string(one address)
+      if (typeof (data.streets.street) == "string") {
         html1 = `<option id = "option1">${data.streets.street}</option>`
       }
 
 
 
-      $(`#street_suggest`).append(html1);
+      $(`#street_suggest`).append(html1);//adding the options in datalist
 
       let selectedText = $("#address").val();
 
-      let division = selectedText.split(", ");
+      let division = selectedText.split(", ");//spliting the address
 
-
+      //when there is a full address in the form value(nothing is missing)
       if (division[3] != undefined) {
         document.getElementById("address").value = division[0];
         document.getElementById("city").value = division[1];
         document.getElementById("state").value = division[2];
         document.getElementById("zip").value = division[3];
         document.getElementById("province").value = "CA";
+        $(`#street_suggest`).empty();
       }
-
-
-
-
-
     })
   html1 = "";
   $(`#street_suggest`).empty();
   address_array = [];
 
 }
-
+//same like billing's geocoder
 function autocomplete_form_ship() {
   let num;
   let text;
@@ -1465,6 +1492,7 @@ function autocomplete_form_ship() {
         document.getElementById("state_ship").value = division[2];
         document.getElementById("zip_ship").value = division[3];
         document.getElementById("province_ship").value = "CA";
+        $(`#street_suggest_ship`).empty();
       }
 
 
@@ -1482,7 +1510,7 @@ function autocomplete_form_ship() {
 
 
 
-
+//post validation starts
 $("#confirm-button").click(function () {
   final_json();
 });
@@ -1493,6 +1521,7 @@ function final_json() {
   let amount = document.getElementById("subtotal").getAttribute("value");
   let taxes = document.getElementById("st_tax").getAttribute("value");
   let shipping = document.getElementById("shipping_cost").getAttribute("value");
+  //the JSON object to send
   let final_json_send = {
     "card_number": $(`#card-num`).val(),
     "expiry_month": $(`#mm`).val(),
@@ -1528,20 +1557,22 @@ function final_json() {
 
 
   }
-
+  //creating a formdata and posting the values in the server and working with the return
   let formdata = new FormData();
   formdata.append('submission', JSON.stringify(final_json_send));
-  let response = fetch('https://deepblue.camosun.bc.ca/~c0180354/ics128/final/', {
+  fetch('https://deepblue.camosun.bc.ca/~c0180354/ics128/final/', {
     method: 'POST',
     body: formdata
   }).then(response => response.json()).
     then((json) => {
       data = json;
-
+      //if it is not submitted
       if (data.status == "NOT SUBMITTED") {
-       
+
         post_validation(data);
-      } else {
+      }
+      //if everything is alright
+      else {
         $('#confirmation').modal('show');
         $('#myModal').modal('hide');
         cart.emptyCart();
@@ -1553,9 +1584,11 @@ function final_json() {
         $("#checkout").hide();
         $("#item").hide();
       }
-    })
+    });
 }
 
+//working with errors from post submitting
+//if the error object is there, it is gonna target the related form input id and make tooltips
 function post_validation(data) {
   if (data.error.card_number != undefined) {
     $("#card-num").addClass("is-invalid");
@@ -1680,7 +1713,7 @@ function post_validation(data) {
   $("#myModal").find("#confirm-button").hide();
 
 }
-
+//shows the related button according to tab
 $("#payment-details").click(function () {
   $("#myModal").find("#continue-button-1").show();
   $("#myModal").find("#continue-button-2").hide();
@@ -1709,13 +1742,15 @@ $("#confirm-order").click(function () {
   $("#myModal").find("#confirm-button").show();
 });
 
+//change the states according to counrty
 document.getElementById("province").addEventListener("input", billing_states_change);
-document.getElementById("province").addEventListener("input", shipping_states_change);
+document.getElementById("province_ship").addEventListener("input", shipping_states_change);
 
 function billing_states_change() {
   let value = $(`#province`).val();
   let state = document.getElementById("state");
   if (value == "US") {
+    //checks the value of the country and connects the states accordingly
     state.setAttribute('list', "state_list_USA")
   }
   if (value == "CA") {
@@ -1727,6 +1762,7 @@ function shipping_states_change() {
   let value = $(`#province_ship`).val();
   let state = document.getElementById("state_ship");
   if (value == "US") {
+    //checks the value of the country and connects the states accordingly
     state.setAttribute('list', "state_list_ship_USA");
   }
   if (value == "CA") {
